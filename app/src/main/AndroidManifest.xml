@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ruangtenang">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="Ruang Tenang"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.RuangTenang">
+
+        <!-- MainActivity (Halaman Utama yang menampung ke-4 Menu) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Activity untuk form tambah dan edit jurnal -->
+        <!-- windowSoftInputMode="adjustResize" memastikan form tidak tertutup keyboard -->
+        <activity
+            android:name=".ui.journal.AddEditJournalActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Activity untuk melihat detail/preview jurnal lengkap -->
+        <activity android:name=".ui.journal.JournalDetailActivity" />
+
+        <!-- Activity untuk membaca artikel lengkap (WebView in-app) -->
+        <activity
+            android:name=".ui.article.ArticleWebViewActivity"
+            android:exported="false" />
+
+        <!-- Halaman Profil Pengguna -->
+        <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

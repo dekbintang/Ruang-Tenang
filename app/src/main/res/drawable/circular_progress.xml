@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Track (latar cincin abu-abu) -->
+    <item android:id="@android:id/background">
+        <shape
+            android:innerRadiusRatio="2.8"
+            android:shape="ring"
+            android:thicknessRatio="12"
+            android:useLevel="false">
+            <solid android:color="#E2E8F0" />
+        </shape>
+    </item>
+    <!-- Progress (cincin berwarna oranye) -->
+    <item android:id="@android:id/progress">
+        <rotate
+            android:fromDegrees="270"
+            android:toDegrees="270">
+            <shape
+                android:innerRadiusRatio="2.8"
+                android:shape="ring"
+                android:thicknessRatio="12"
+                android:useLevel="true">
+                <solid android:color="#F4A261" />
+            </shape>
+        </rotate>
+    </item>
+</layer-list>

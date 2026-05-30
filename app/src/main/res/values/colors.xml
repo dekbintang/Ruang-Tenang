@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Warna Utama Ruang Tenang (Dark Blue / Navy Theme) -->
+    <color name="primary">#1E3A8A</color>        <!-- Dark Navy Blue -->
+    <color name="primaryLight">#3B82F6</color>   <!-- Bright Blue for accents -->
+    <color name="background">#F8FAFC</color>     <!-- Sangat soft blue-grey untuk background -->
+    <color name="textPrimary">#1e293b</color>    <!-- Slate 800 -->
+    <color name="textSecondary">#64748b</color>  <!-- Slate 500 -->
+
+    <color name="bottom_nav_color">#1E3A8A</color>
+</resources>

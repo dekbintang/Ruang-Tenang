@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F4F7FE">
+
+    <!-- ═══════════════════════════════════════════════════════
+         HEADER — gradient dengan ornamen bulat dekoratif
+         ═══════════════════════════════════════════════════════ -->
+    <LinearLayout
+        android:id="@+id/header_section"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@drawable/bg_journal_header"
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        android:paddingBottom="32dp"
+        android:paddingHorizontal="20dp"
+        android:elevation="4dp">
+
+        <!-- Toolbar Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Tombol kembali -->
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icon_glass"
+                android:src="@drawable/ic_chevron_left"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                app:tint="#FFFFFF" />
+
+            <!-- Judul toolbar -->
+            <TextView
+                android:id="@+id/tv_toolbar_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="14dp"
+                android:text="Jurnal Baru"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.01" />
+
+        </LinearLayout>
+
+        <!-- Sub-info: tanggal -->
+        <TextView
+            android:id="@+id/tv_journal_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Hari ini, 29 Mei 2026"
+            android:textColor="#BBDEFB"
+            android:textSize="13sp"
+            android:fontFamily="sans-serif"
+            android:letterSpacing="0.02" />
+
+        <!-- Tagline / inspirational -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="✨ Ceritakan harimu, rasakan lega-nya"
+            android:textColor="#E3F2FD"
+            android:textSize="13sp"
+            android:fontFamily="sans-serif" />
+
+    </LinearLayout>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SCROLLABLE CONTENT — konten utama form jurnal
+         ═══════════════════════════════════════════════════════ -->
+    <ScrollView
+        android:id="@+id/scroll_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="180dp"
+        android:layout_marginBottom="88dp"
+        android:scrollbars="none"
+        android:overScrollMode="never"
+        android:clipToPadding="false"
+        android:paddingTop="28dp"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- ─── CARD: Mood Selector ─────────────────────── -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Label section -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="20dp"
+                            android:background="#1E3A8A"
+                            android:layout_marginEnd="10dp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Perasaanku saat ini"
+                            android:textColor="#1e293b"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium" />
+
+                        <TextView
+                            android:id="@+id/tv_selected_mood_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Netral"
+                            android:textColor="#1E3A8A"
+                            android:textSize="13sp"
+                            android:background="@drawable/bg_chip"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="4dp" />
+                    </LinearLayout>
+
+                    <!-- Mood buttons horizontal scroll -->
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none"
+                        android:clipToPadding="false"
+                        android:paddingHorizontal="2dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <!-- Happy -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:layout_marginEnd="8dp">
+                                <ImageButton
+                                    android:id="@+id/btn_mood_happy"
+                                    android:layout_width="56dp"
+                                    android:layout_height="56dp"
+                                    android:background="@drawable/bg_mood_happy"
+                                    android:src="@drawable/ic_mood_happy"
+                                    android:scaleType="centerInside"
+                                    app:tint="#FFFFFF"
+                                    android:padding="12dp" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Senang"
+                                    android:textColor="#64748b"
+                                    android:textSize="10sp"
+                                    android:gravity="center" />
+                            </LinearLayout>
+
+                            <!-- Calm -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:layout_marginEnd="8dp">
+                                <ImageButton
+                                    android:id="@+id/btn_mood_calm"
+                                    android:layout_width="56dp"
+                                    android:layout_height="56dp"
+                                    android:background="@drawable/bg_mood_calm"
+                                    android:src="@drawable/ic_mood_calm"
+                                    android:scaleType="centerInside"
+                                    app:tint="#FFFFFF"
+                                    android:padding="12dp" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Tenang"
+                                    android:textColor="#64748b"
+                                    android:textSize="10sp"
+                                    android:gravity="center" />
+                            </LinearLayout>
+
+                            <!-- Neutral -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:layout_marginEnd="8dp">
+                                <ImageButton
+                                    android:id="@+id/btn_mood_neutral"
+                                    android:layout_width="56dp"
+                                    android:layout_height="56dp"
+                                    android:background="@drawable/bg_mood_neutral"
+                                    android:src="@drawable/ic_mood_neutral"
+                                    android:scaleType="centerInside"
+                                    app:tint="#FFFFFF"
+                                    android:padding="12dp" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Netral"
+                                    android:textColor="#64748b"
+                                    android:textSize="10sp"
+                                    android:gravity="center" />
+                            </LinearLayout>
+
+                            <!-- Sad -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:layout_marginEnd="8dp">
+                                <ImageButton
+                                    android:id="@+id/btn_mood_sad"
+                                    android:layout_width="56dp"
+                                    android:layout_height="56dp"
+                                    android:background="@drawable/bg_mood_sad"
+                                    android:src="@drawable/ic_mood_sad"
+                                    android:scaleType="centerInside"
+                                    app:tint="#FFFFFF"
+                                    android:padding="12dp" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Sedih"
+                                    android:textColor="#64748b"
+                                    android:textSize="10sp"
+                                    android:gravity="center" />
+                            </LinearLayout>
+
+                            <!-- Anxious -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:layout_marginEnd="8dp">
+                                <ImageButton
+                                    android:id="@+id/btn_mood_anxious"
+                                    android:layout_width="56dp"
+                                    android:layout_height="56dp"
+                                    android:background="@drawable/bg_mood_anxious"
+                                    android:src="@drawable/ic_mood_anxious"
+                                    android:scaleType="centerInside"
+                                    app:tint="#FFFFFF"
+                                    android:padding="12dp" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Cemas"
+                                    android:textColor="#64748b"
+                                    android:textSize="10sp"
+                                    android:gravity="center" />
+                            </LinearLayout>
+
+                            <!-- Angry -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:layout_marginEnd="8dp">
+                                <ImageButton
+                                    android:id="@+id/btn_mood_angry"
+                                    android:layout_width="56dp"
+                                    android:layout_height="56dp"
+                                    android:background="@drawable/bg_mood_angry"
+                                    android:src="@drawable/ic_mood_angry"
+                                    android:scaleType="centerInside"
+                                    app:tint="#FFFFFF"
+                                    android:padding="12dp" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Marah"
+                                    android:textColor="#64748b"
+                                    android:textSize="10sp"
+                                    android:gravity="center" />
+                            </LinearLayout>
+
+                            <!-- Shy -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:layout_marginEnd="8dp">
+                                <ImageButton
+                                    android:id="@+id/btn_mood_shy"
+                                    android:layout_width="56dp"
+                                    android:layout_height="56dp"
+                                    android:background="@drawable/bg_mood_shy"
+                                    android:src="@drawable/ic_mood_shy"
+                                    android:scaleType="centerInside"
+                                    app:tint="#FFFFFF"
+                                    android:padding="12dp" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Malu"
+                                    android:textColor="#64748b"
+                                    android:textSize="10sp"
+                                    android:gravity="center" />
+                            </LinearLayout>
+
+                            <!-- Scared -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:layout_marginEnd="8dp">
+                                <ImageButton
+                                    android:id="@+id/btn_mood_scared"
+                                    android:layout_width="56dp"
+                                    android:layout_height="56dp"
+                                    android:background="@drawable/bg_mood_scared"
+                                    android:src="@drawable/ic_mood_scared"
+                                    android:scaleType="centerInside"
+                                    app:tint="#FFFFFF"
+                                    android:padding="12dp" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Takut"
+                                    android:textColor="#64748b"
+                                    android:textSize="10sp"
+                                    android:gravity="center" />
+                            </LinearLayout>
+
+                            <!-- Lazy -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:gravity="center">
+                                <ImageButton
+                                    android:id="@+id/btn_mood_lazy"
+                                    android:layout_width="56dp"
+                                    android:layout_height="56dp"
+                                    android:background="@drawable/bg_mood_lazy"
+                                    android:src="@drawable/ic_mood_lazy"
+                                    android:scaleType="centerInside"
+                                    app:tint="#FFFFFF"
+                                    android:padding="12dp" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Malas"
+                                    android:textColor="#64748b"
+                                    android:textSize="10sp"
+                                    android:gravity="center" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ─── CARD: Judul Jurnal ──────────────────────── -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="20dp">
+
+                    <!-- Label -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp">
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="20dp"
+                            android:background="#4F46E5"
+                            android:layout_marginEnd="10dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Judul Cerita"
+                            android:textColor="#1e293b"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium" />
+                    </LinearLayout>
+
+                    <!-- Input judul -->
+                    <EditText
+                        android:id="@+id/et_journal_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:hint="Beri judul ceritamu..."
+                        android:textColor="#1e293b"
+                        android:textColorHint="#CBD5E1"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
+                        android:inputType="textCapSentences"
+                        android:maxLines="2"
+                        android:padding="0dp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ─── CARD: Isi Jurnal ────────────────────────── -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="20dp">
+
+                    <!-- Label -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp">
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="20dp"
+                            android:background="#3B82F6"
+                            android:layout_marginEnd="10dp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Isi Cerita"
+                            android:textColor="#1e293b"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium" />
+
+                        <!-- Character counter -->
+                        <TextView
+                            android:id="@+id/tv_char_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 karakter"
+                            android:textColor="#94A3B8"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <!-- Divider tipis -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F1F5F9"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Input isi jurnal -->
+                    <EditText
+                        android:id="@+id/et_journal_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:gravity="top|start"
+                        android:hint="Apa yang ada di pikiranmu hari ini? Ceritakan saja, tidak ada yang menghakimi di sini... 💙"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:minLines="10"
+                        android:textColor="#1e293b"
+                        android:textColorHint="#CBD5E1"
+                        android:textSize="15sp"
+                        android:lineSpacingMultiplier="1.5"
+                        android:padding="0dp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Padding bawah -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- ═══════════════════════════════════════════════════════
+         BOTTOM BAR — tombol simpan tetap di bawah
+         ═══════════════════════════════════════════════════════ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#F4F7FE"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="20dp"
+        android:elevation="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_journal"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:backgroundTint="@color/primary"
+            android:text="Simpan Jurnal"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:letterSpacing="0.01"
+            app:cornerRadius="18dp"
+            app:iconGravity="textStart" />
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

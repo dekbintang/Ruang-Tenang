@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:stateListAnimator="@animator/card_lift"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="6dp"
+    app:strokeWidth="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Frame Gambar dengan Label Mengambang -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+
+            <!-- Thumbnail gambar artikel -->
+            <ImageView
+                android:id="@+id/iv_article_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:background="#EDF2FF"
+                android:src="@drawable/ic_mood_neutral" />
+
+            <!-- Gradient Overlay (agar teks label putih tetap terbaca meski gambarnya terang) -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/bg_image_overlay" />
+
+            <!-- Label Sumber Berita (Floating Chip) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:layout_margin="16dp"
+                android:background="@drawable/bg_chip_source_overlay"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp">
+
+                <TextView
+                    android:id="@+id/tv_article_source"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sumber"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- Konten Bawah (Teks) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Tanggal dipindah ke atas dekat judul -->
+            <TextView
+                android:id="@+id/tv_article_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="12 Mei 2025"
+                android:textColor="#94A3B8"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <!-- Judul artikel dengan line spacing ekstra -->
+            <TextView
+                android:id="@+id/tv_article_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Judul Artikel Menarik Tentang Kesehatan Mental"
+                android:textColor="#1e293b"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:lineSpacingExtra="4dp"
+                android:maxLines="3"
+                android:ellipsize="end" />
+
+            <!-- Ringkasan artikel -->
+            <TextView
+                android:id="@+id/tv_article_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Ringkasan artikel kesehatan mental yang bisa dibaca. Ini sangat bermanfaat untuk relaksasi dan meditasi harianmu."
+                android:textColor="#64748b"
+                android:textSize="13sp"
+                android:lineSpacingExtra="4dp"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <!-- Garis pemisah tipis -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:background="#E2E8F0" />
+
+            <!-- Tombol Baca Selengkapnya -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:tag="tv_read_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Baca Selengkapnya →"
+                    android:textColor="#3B82F6"
+                    android:paddingVertical="6dp"
+                    android:paddingHorizontal="12dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

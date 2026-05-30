@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:stateListAnimator="@animator/card_lift"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp"
+    app:strokeColor="#F1F5F9"
+    app:strokeWidth="1.5dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <!-- Latar Belakang Ikon Mood -->
+        <FrameLayout
+            android:id="@+id/mood_container"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_emoji_circle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_journal_mood"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:scaleType="centerInside" />
+        </FrameLayout>
+
+        <!-- Judul Jurnal -->
+        <TextView
+            android:id="@+id/tv_journal_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Judul Jurnal"
+            android:textColor="#0F172A"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/iv_arrow"
+            app:layout_constraintStart_toEndOf="@id/mood_container"
+            app:layout_constraintTop_toTopOf="@id/mood_container"
+            app:layout_constraintBottom_toTopOf="@id/tv_journal_date"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <!-- Tanggal -->
+        <TextView
+            android:id="@+id/tv_journal_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="28 Mei 2026"
+            android:textColor="#6366F1"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/tv_journal_title"
+            app:layout_constraintEnd_toEndOf="@id/tv_journal_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_journal_title"
+            app:layout_constraintBottom_toBottomOf="@id/mood_container" />
+
+        <!-- Panah Kanan -->
+        <ImageView
+            android:id="@+id/iv_arrow"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@android:drawable/ic_media_play"
+            app:tint="#CBD5E1"
+            android:rotation="180"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/mood_container"
+            app:layout_constraintBottom_toBottomOf="@id/mood_container" />
+
+        <!-- Garis Pembatas (Divider) -->
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#F1F5F9"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mood_container" />
+
+        <!-- Preview Teks -->
+        <TextView
+            android:id="@+id/tv_journal_preview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="Preview teks jurnal akan muncul di sini..."
+            android:textColor="#64748B"
+            android:lineSpacingExtra="4dp"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F4F7FF">
+
+    <!-- Header bergradien -->
+    <LinearLayout
+        android:id="@+id/layout_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_header_gradient"
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        android:paddingBottom="56dp"
+        android:paddingHorizontal="20dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Toolbar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_chevron_left"
+                android:scaleType="centerInside"
+                android:padding="6dp"
+                android:tint="#FFFFFF" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ruang Baca"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <!-- Spacer untuk simetri -->
+            <View
+                android:layout_width="44dp"
+                android:layout_height="44dp" />
+        </LinearLayout>
+
+        <!-- Kategori + icon -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/bg_chip_white"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_article_icon"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_article_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="KATEGORI"
+                    android:textColor="#C8D8F4"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="true" />
+
+                <TextView
+                    android:id="@+id/tv_article_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Judul Artikel"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Kartu konten artikel -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="-28dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/layout_header"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <View
+                    android:layout_width="40dp"
+                    android:layout_height="4dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="#5A94F2" />
+
+                <TextView
+                    android:id="@+id/tv_article_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="8dp"
+                    android:text="Isi artikel akan tampil di sini..."
+                    android:textColor="#4A5568"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </ScrollView>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
