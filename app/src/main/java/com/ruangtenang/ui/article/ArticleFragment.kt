@@ -9,7 +9,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -61,23 +60,6 @@ class ArticleFragment : Fragment() {
         rvArticles.layoutManager = LinearLayoutManager(requireContext())
         rvArticles.adapter = adapter
 
-        // Divider hanya antara item compact (posisi 2+)
-        val divider = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        rvArticles.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(
-                outRect: android.graphics.Rect,
-                view: View,
-                parent: RecyclerView,
-                state: RecyclerView.State
-            ) {
-                val pos = parent.getChildAdapterPosition(view)
-                // Hanya compact rows (pos >= 2) yang dapat divider bawah
-                if (pos >= 2) {
-                    outRect.bottom = 0
-                }
-            }
-        })
-
         // Tombol Coba Lagi
         btnRetry.setOnClickListener { viewModel.refreshArticles() }
 
@@ -85,27 +67,42 @@ class ArticleFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+        // Loading state
         viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
             layoutLoading.visibility = if (loading) View.VISIBLE else View.GONE
-            rvArticles.visibility    = if (loading) View.GONE   else View.VISIBLE
-            if (loading) layoutError.visibility = View.GONE
+            if (loading) {
+                rvArticles.visibility  = View.GONE
+                layoutError.visibility = View.GONE
+            }
         }
 
+        // Artikel berhasil dimuat
         viewModel.articles.observe(viewLifecycleOwner) { articles ->
-            if (articles.isNullOrEmpty()) return@observe
-            adapter.submitList(articles)
-            layoutError.visibility = View.GONE
-            rvArticles.visibility  = View.VISIBLE
+            // PERBAIKAN: dulu ada "if (articles.isNullOrEmpty()) return@observe"
+            // yang membuat list kosong tidak pernah trigger error state.
+            // Sekarang kita handle eksplisit:
+            if (!articles.isNullOrEmpty()) {
+                adapter.submitList(articles)
+                rvArticles.visibility  = View.VISIBLE
+                layoutError.visibility = View.GONE
+                layoutLoading.visibility = View.GONE
+            }
+            // Jika kosong, biarkan errorMessage observer yang handle
         }
 
+        // Error state
         viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
             if (message == null) return@observe
+
+            // Jika ada artikel tampil → pakai Snackbar (tidak mengganggu tampilan)
             if (adapter.itemCount > 0) {
                 Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
             } else {
+                // Tidak ada artikel sama sekali → tampilkan error state penuh
                 tvError.text           = message
                 layoutError.visibility = View.VISIBLE
                 rvArticles.visibility  = View.GONE
+                layoutLoading.visibility = View.GONE
             }
         }
     }

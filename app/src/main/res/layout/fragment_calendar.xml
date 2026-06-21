@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<!--
+    PERBAIKAN:
+    - Ganti CoordinatorLayout → FrameLayout buat structure yang lebih simpel & predictable
+    - Header menggunakan AppBarLayout + CollapsingToolbar sudah overkill; pakai LinearLayout biasa
+    - ScrollView dipindahkan ke dalam NestedScrollView di bawah header (tidak lagi pakai marginTop manual)
+    - Hapus layout_marginTop="-20dp" di CardView kalender (penyebab tumpang tindih)
+    - Gunakan struktur LinearLayout vertikal sebagai root agar posisi header & konten tidak bertabrakan
+-->
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="#F4F7FE">
 
     <!-- ═══════════════════════════════════════════════════════
-         HEADER — gradient bersih tanpa card statistik
+         HEADER — gradient bersih
          ═══════════════════════════════════════════════════════ -->
     <LinearLayout
         android:id="@+id/layout_header"
@@ -17,7 +26,7 @@
         android:orientation="vertical"
         android:paddingTop="28dp"
         android:paddingHorizontal="24dp"
-        android:paddingBottom="56dp"
+        android:paddingBottom="28dp"
         android:elevation="2dp">
 
         <TextView
@@ -42,29 +51,28 @@
     </LinearLayout>
 
     <!-- ═══════════════════════════════════════════════════════
-         SCROLL KONTEN
+         SCROLL KONTEN — di bawah header, tidak overlapping
          ═══════════════════════════════════════════════════════ -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="110dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:scrollbars="none"
         android:overScrollMode="never"
         android:clipToPadding="false"
         android:paddingHorizontal="16dp"
-        android:paddingBottom="24dp"
-        android:paddingTop="8dp">
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Card Kalender -->
+            <!-- Card Kalender — tidak ada marginTop negatif -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-20dp"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="6dp"
                 app:cardBackgroundColor="#FFFFFF">
@@ -251,4 +259,4 @@
         </LinearLayout>
     </ScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

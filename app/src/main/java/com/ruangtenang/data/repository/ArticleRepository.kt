@@ -1,81 +1,147 @@
 package com.ruangtenang.data.repository
 
 import android.content.Context
-import androidx.lifecycle.LiveData
 import com.ruangtenang.BuildConfig
 import com.ruangtenang.data.db.AffirmationDao
 import com.ruangtenang.data.entity.Affirmation
 import com.ruangtenang.data.remote.GNewsArticle
+import com.ruangtenang.data.remote.GNewsSource
 import com.ruangtenang.data.remote.RetrofitClient
+import org.json.JSONArray
 
 /**
  * Repository untuk artikel dari GNews API.
  *
- * Strategi caching:
- * - Hasil fetch disimpan sementara di SharedPreferences (sebagai JSON string)
- * - Cache berlaku selama 1 jam untuk menghemat quota GNews free tier (100 req/hari)
- * - Jika gagal fetch dan tidak ada cache → return Result.failure dengan pesan yang ramah
+ * Strategi:
+ * 1. Cek cache SharedPreferences (berlaku 1 jam)
+ * 2. Jika cache expired → fetch dari GNews API
+ * 3. Jika API key kosong/invalid atau jaringan gagal → fallback ke seed_articles.json di assets
+ *
+ * Dengan fallback ini, artikel tetap tampil meski API key belum dikonfigurasi.
  */
 class ArticleRepository(
     private val context: Context,
     private val affirmationDao: AffirmationDao
 ) {
     companion object {
-        private const val PREF_NAME          = "gnews_cache_v4"
-        private const val KEY_CACHE_TIME     = "cache_timestamp"
-        private const val KEY_CACHED_JSON    = "cached_json"
-        private const val CACHE_DURATION_MS  = 60 * 60 * 1000L // 1 jam
+        private const val PREF_NAME         = "gnews_cache_v4"
+        private const val KEY_CACHE_TIME    = "cache_timestamp"
+        private const val KEY_CACHED_JSON   = "cached_json"
+        private const val CACHE_DURATION_MS = 60 * 60 * 1000L // 1 jam
     }
 
     private val prefs by lazy {
         context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     }
 
-    // ── Fetch artikel dari GNews API (dengan caching 1 jam) ──────────────────
+    // ── Fetch artikel: cache → network → seed fallback ───────────────────────
     suspend fun fetchArticles(): Result<List<GNewsArticle>> {
-        // 1. Cek apakah cache masih fresh (< 1 jam)
+        // 1. Cek cache
         val cachedJson = getCachedJson()
         if (cachedJson != null) {
             return try {
                 val type = object : com.google.gson.reflect.TypeToken<List<GNewsArticle>>() {}.type
                 val cached: List<GNewsArticle> = com.google.gson.Gson().fromJson(cachedJson, type)
-                Result.success(cached)
+                if (cached.isNotEmpty()) Result.success(cached) else fetchFromNetworkOrSeed()
             } catch (e: Exception) {
-                fetchFromNetwork()
+                fetchFromNetworkOrSeed()
             }
         }
 
-        // 2. Cache expired/tidak ada → fetch dari network
-        return fetchFromNetwork()
+        // 2. Cache expired/tidak ada → fetch dari network atau seed
+        return fetchFromNetworkOrSeed()
     }
 
-    private suspend fun fetchFromNetwork(): Result<List<GNewsArticle>> {
-        return try {
-            val apiKey = BuildConfig.GNEWS_API_KEY
-            if (apiKey.isBlank() || apiKey == "ISI_API_KEY_DISINI") {
-                return Result.failure(Exception("API key belum dikonfigurasi. Masukkan GNEWS_API_KEY di local.properties."))
-            }
+    private suspend fun fetchFromNetworkOrSeed(): Result<List<GNewsArticle>> {
+        val apiKey = BuildConfig.GNEWS_API_KEY
 
+        // Jika API key belum dikonfigurasi → langsung pakai seed
+        if (apiKey.isBlank() || apiKey == "ISI_API_KEY_DISINI") {
+            return loadSeedArticles()
+        }
+
+        return try {
             val response = RetrofitClient.gNewsApi.searchArticles(apiKey = apiKey)
             val articles = response.articles
 
-            // Simpan ke cache
-            saveToCache(articles)
+            if (articles.isNotEmpty()) {
+                saveToCache(articles)
+                Result.success(articles)
+            } else {
+                // API sukses tapi artikel kosong → pakai seed
+                loadSeedArticles()
+            }
+        } catch (e: retrofit2.HttpException) {
+            // Error HTTP (401, 429, dsb) → fallback ke seed
+            loadSeedArticles()
+        } catch (e: java.net.UnknownHostException) {
+            // Tidak ada internet → fallback ke seed
+            loadSeedArticles()
+        } catch (e: java.net.SocketTimeoutException) {
+            // Timeout → fallback ke seed
+            loadSeedArticles()
+        } catch (e: Exception) {
+            // Error lain → coba seed, kalau seed juga gagal baru return failure
+            val seed = loadSeedArticles()
+            if (seed.isSuccess && (seed.getOrNull()?.isNotEmpty() == true)) seed
+            else Result.failure(Exception("Terjadi kesalahan: ${e.localizedMessage}"))
+        }
+    }
+
+    // ── Muat artikel dari assets/seed_articles.json ──────────────────────────
+    //
+    // Struktur seed_articles.json berbeda dari GNewsArticle (field lokal seperti
+    // "category", "emoji_icon", "summary", "content" plain text, tanpa "url" eksternal).
+    // Kita peta ulang ke GNewsArticle agar adapter tidak perlu diubah.
+    private fun loadSeedArticles(): Result<List<GNewsArticle>> {
+        return try {
+            val json = context.assets.open("seed_articles.json")
+                .bufferedReader()
+                .use { it.readText() }
+
+            val jsonArray = JSONArray(json)
+            val articles = mutableListOf<GNewsArticle>()
+
+            for (i in 0 until jsonArray.length()) {
+                val obj = jsonArray.getJSONObject(i)
+
+                // Seed pakai "summary" sebagai deskripsi singkat
+                val description = obj.optString("summary").takeIf { it.isNotBlank() }
+
+                // Seed pakai "content" sebagai isi artikel
+                val content = obj.optString("content").takeIf { it.isNotBlank() }
+
+                // Seed tidak punya URL eksternal — pakai string kosong
+                // ArticleWebViewActivity akan mendeteksi ini dan menampilkan content lokal
+                val url = obj.optString("url", "")
+
+                // Seed mungkin punya "image_url" atau tidak ada gambar
+                val image = obj.optString("image_url", "")
+                    .takeIf { it.isNotBlank() }
+
+                // Kategori artikel dijadikan "sumber"
+                val category = obj.optString("category", "Kesehatan Mental")
+                val source = GNewsSource(name = category, url = "")
+
+                // Tanggal publikasi — seed tidak punya, pakai string kosong
+                val publishedAt = obj.optString("publishedAt", "2024-01-01T00:00:00Z")
+
+                articles.add(
+                    GNewsArticle(
+                        title       = obj.optString("title", ""),
+                        description = description,
+                        content     = content,
+                        url         = url,
+                        image       = image,
+                        publishedAt = publishedAt,
+                        source      = source
+                    )
+                )
+            }
 
             Result.success(articles)
-        } catch (e: retrofit2.HttpException) {
-            val msg = when (e.code()) {
-                401 -> "API key tidak valid. Periksa kembali GNEWS_API_KEY di local.properties."
-                429 -> "Batas request harian tercapai. Coba lagi besok."
-                else -> "Gagal memuat artikel (HTTP ${e.code()})"
-            }
-            Result.failure(Exception(msg))
-        } catch (e: java.net.UnknownHostException) {
-            Result.failure(Exception("Tidak ada koneksi internet. Periksa jaringanmu."))
-        } catch (e: java.net.SocketTimeoutException) {
-            Result.failure(Exception("Koneksi timeout. Coba lagi sebentar."))
         } catch (e: Exception) {
-            Result.failure(Exception("Terjadi kesalahan: ${e.localizedMessage}"))
+            Result.failure(Exception("Gagal memuat artikel. Coba lagi nanti."))
         }
     }
 
@@ -84,7 +150,7 @@ class ArticleRepository(
     private fun getCachedJson(): String? {
         val cacheTime = prefs.getLong(KEY_CACHE_TIME, 0L)
         val now       = System.currentTimeMillis()
-        if (now - cacheTime > CACHE_DURATION_MS) return null // cache kedaluwarsa
+        if (now - cacheTime > CACHE_DURATION_MS) return null
         return prefs.getString(KEY_CACHED_JSON, null)
     }
 
