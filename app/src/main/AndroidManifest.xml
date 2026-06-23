@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ruangtenang">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <application
@@ -12,15 +11,24 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.RuangTenang">
 
-        <!-- MainActivity (Halaman Utama yang menampung ke-4 Menu) -->
+        <!-- SplashActivity (Entry Point) -->
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.onboarding.OnboardingActivity" android:exported="false"/>
+        <activity android:name=".ui.auth.AuthActivity" android:exported="false"/>
+        <activity android:name=".ui.auth.RegisterActivity" android:exported="false"/>
+
+        <!-- MainActivity (Halaman Utama yang menampung ke-4 Menu) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
 
         <!-- Activity untuk form tambah dan edit jurnal -->
         <!-- windowSoftInputMode="adjustResize" memastikan form tidak tertutup keyboard -->
@@ -40,6 +48,17 @@
         <activity
             android:name=".ui.profile.ProfileActivity"
             android:exported="false" />
+
+        <!-- Halaman Pembayaran Konseling -->
+        <activity
+            android:name=".ui.counseling.PaymentActivity"
+            android:exported="false" />
+
+        <!-- Ruang Chat Konseling -->
+        <activity
+            android:name=".ui.counseling.ChatRoomActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
     </application>
 

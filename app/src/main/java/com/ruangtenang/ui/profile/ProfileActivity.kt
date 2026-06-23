@@ -1,6 +1,7 @@
 package com.ruangtenang.ui.profile
 
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -33,8 +34,28 @@ class ProfileActivity : AppCompatActivity() {
 
         dashboardViewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
 
+        val session = com.ruangtenang.data.SessionManager(this)
+        val tvName = findViewById<TextView>(R.id.tv_profile_name)
+        if (session.isGuestMode) {
+            tvName.text = "Guest User"
+        } else {
+            val name = session.registeredName
+            tvName.text = name ?: "Pengguna"
+        }
+
+        findViewById<View>(R.id.btn_logout).setOnClickListener {
+            // Hapus status login
+            session.isLoggedIn = false
+            session.isGuestMode = false
+            
+            // Pindah ke halaman Login dan hapus tumpukan activity (history)
+            val intent = android.content.Intent(this, com.ruangtenang.ui.auth.AuthActivity::class.java)
+            intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
+
         loadStats()
-        observeStreak()
         observeMood()
     }
 
@@ -50,68 +71,7 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeStreak() {
-        dashboardViewModel.currentStreak.observe(this) { streak ->
-            // Update angka streak di stat card
-            findViewById<TextView>(R.id.tv_streak_days).text = "$streak"
 
-            // Update warna background streak frame berdasarkan level
-            val frameStreak = findViewById<android.widget.FrameLayout>(R.id.frame_streak)
-            val tvStreakDays = findViewById<TextView>(R.id.tv_streak_days)
-
-            val (bgTint, textColor) = when {
-                streak >= 14 -> Pair("#FEF3C7", "#92400E") // Dark Gold
-                streak >= 7  -> Pair("#FEF9C3", "#A16207") // Gold
-                streak >= 4  -> Pair("#FFEDD5", "#C2410C") // Orange
-                streak >= 2  -> Pair("#FEE2E2", "#DC2626") // Red
-                streak >= 1  -> Pair("#FFF7ED", "#EA580C") // Soft orange
-                else         -> Pair("#F1F5F9", "#64748B") // Grey
-            }
-            frameStreak.backgroundTintList = android.content.res.ColorStateList.valueOf(
-                android.graphics.Color.parseColor(bgTint)
-            )
-            tvStreakDays.setTextColor(android.graphics.Color.parseColor(textColor))
-
-            // Update streak highlight card
-            val cardStreakHighlight = findViewById<com.google.android.material.card.MaterialCardView>(R.id.card_streak_highlight)
-            val tvTitle = findViewById<TextView>(R.id.tv_streak_highlight_title)
-            val tvMsg = findViewById<TextView>(R.id.tv_streak_highlight_msg)
-            val tvEmoji = findViewById<TextView>(R.id.tv_streak_emoji_big)
-
-            when {
-                streak >= 14 -> {
-                    tvEmoji.text = "🏆"
-                    tvTitle.text = "Streak $streak Hari — Legenda!"
-                    tvMsg.text = "Apimu sudah berubah menjadi emas murni. Kamu luar biasa konsisten!"
-                    cardStreakHighlight.setCardBackgroundColor(android.graphics.Color.parseColor("#FEF9C3"))
-                }
-                streak >= 7 -> {
-                    tvEmoji.text = "🌟"
-                    tvTitle.text = "Streak $streak Hari — Emas!"
-                    tvMsg.text = "Luar biasa! Terus jaga konsistensi menulis jurnalmu."
-                    cardStreakHighlight.setCardBackgroundColor(android.graphics.Color.parseColor("#FEF3C7"))
-                }
-                streak >= 4 -> {
-                    tvEmoji.text = "🔥"
-                    tvTitle.text = "Streak $streak Hari — Membara!"
-                    tvMsg.text = "Apinya semakin besar. Jangan lupa kembali besok!"
-                    cardStreakHighlight.setCardBackgroundColor(android.graphics.Color.parseColor("#FFEDD5"))
-                }
-                streak >= 1 -> {
-                    tvEmoji.text = "🔥"
-                    tvTitle.text = "Streak $streak Hari"
-                    tvMsg.text = "Awal yang bagus! Terus tulis jurnalmu setiap hari."
-                    cardStreakHighlight.setCardBackgroundColor(android.graphics.Color.parseColor("#FFF7ED"))
-                }
-                else -> {
-                    tvEmoji.text = "💤"
-                    tvTitle.text = "Belum Ada Streak"
-                    tvMsg.text = "Tulis jurnalmu hari ini untuk menyalakan api pertama!"
-                    cardStreakHighlight.setCardBackgroundColor(android.graphics.Color.parseColor("#F8FAFC"))
-                }
-            }
-        }
-    }
 
     private fun observeMood() {
         dashboardViewModel.dominantEmotion.observe(this) { (mood, _) ->

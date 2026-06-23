@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ruangtenang.R
-import com.ruangtenang.ui.StreakBottomSheet
+
 import com.ruangtenang.ui.article.ArticleViewModel
 import com.ruangtenang.ui.article.ArticleWebViewActivity
 import com.ruangtenang.ui.article.DashboardArticleAdapter
@@ -47,7 +47,7 @@ class DashboardFragment : Fragment() {
         journalViewModel = ViewModelProvider(requireActivity())[JournalViewModel::class.java]
 
         setupGreeting(view)
-        setupStreak(view)
+
         setupObservers(view)
         setupEmojiShortcuts(view)
         setupActions(view)
@@ -55,10 +55,7 @@ class DashboardFragment : Fragment() {
         setupArticles(view)
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.calculateStreak()
-    }
+
 
     // ── Greeting dinamis ─────────────────────────────────────────────────
     private fun setupGreeting(view: View) {
@@ -83,50 +80,7 @@ class DashboardFragment : Fragment() {
         ).random()
     }
 
-    // ── Streak pill + bottom sheet ───────────────────────────────────────
-    private fun setupStreak(view: View) {
-        val btnStreak    = view.findViewById<View>(R.id.btn_streak) ?: return
-        val tvStreakIcon  = view.findViewById<TextView>(R.id.tv_streak_icon)
-        val tvStreakCount = view.findViewById<TextView>(R.id.tv_streak_count)
 
-        viewModel.currentStreak.observe(viewLifecycleOwner) { streak ->
-
-            // Warna pill berdasarkan level streak
-            val pillColor = when {
-                streak >= 14 -> "#B8860B"  // Dark Gold
-                streak >= 7  -> "#FFD700"  // Gold
-                streak >= 4  -> "#FF8C00"  // Oranye terang
-                streak >= 1  -> "#E85D3A"  // Merah lembut
-                else         -> "#78909C"  // Abu-abu (streak mati)
-            }
-            btnStreak.backgroundTintList =
-                android.content.res.ColorStateList.valueOf(
-                    android.graphics.Color.parseColor(pillColor)
-                )
-
-            // Ikon api berubah sesuai level
-            tvStreakIcon?.text = when {
-                streak >= 14 -> "🏆"
-                streak >= 7  -> "🌟"
-                streak >= 1  -> "🔥"
-                else         -> "💤"
-            }
-
-            // Tampilkan angka streak di samping ikon
-            if (streak > 0) {
-                tvStreakCount?.text       = streak.toString()
-                tvStreakCount?.visibility = View.VISIBLE
-            } else {
-                tvStreakCount?.visibility = View.GONE
-            }
-
-            // Klik pill → buka StreakBottomSheet
-            btnStreak.setOnClickListener {
-                StreakBottomSheet.newInstance(streak)
-                    .show(parentFragmentManager, "streak_sheet")
-            }
-        }
-    }
 
     // ── Emotion meter ────────────────────────────────────────────────────
     private fun setupObservers(view: View) {
@@ -246,6 +200,18 @@ class DashboardFragment : Fragment() {
     }
 
     private fun openAddJournal(moodKey: String?) {
+        val session = com.ruangtenang.data.SessionManager(requireContext())
+        if (!session.isLoggedIn) {
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Login Required")
+                .setMessage("Fitur Jurnal hanya tersedia untuk pengguna yang sudah login. Silakan login terlebih dahulu.")
+                .setPositiveButton("Login") { _, _ ->
+                    startActivity(Intent(requireContext(), com.ruangtenang.ui.auth.AuthActivity::class.java))
+                }
+                .setNegativeButton("Batal", null)
+                .show()
+            return
+        }
         startActivity(
             Intent(requireContext(), AddEditJournalActivity::class.java).apply {
                 moodKey?.let { putExtra(AddEditJournalActivity.EXTRA_PRESET_MOOD, it) }

@@ -9,6 +9,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.ruangtenang.data.entity.Affirmation
+import com.ruangtenang.data.entity.ChatMessageEntity
+import com.ruangtenang.data.entity.ChatSession
 import com.ruangtenang.data.entity.Journal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,14 +25,15 @@ import kotlinx.coroutines.launch
  * Migration dari versi 1 → 2: drop tabel article_table (tidak dipakai lagi)
  */
 @Database(
-    entities = [Journal::class, Affirmation::class],
-    version = 2,
+    entities = [Journal::class, Affirmation::class, ChatSession::class, ChatMessageEntity::class],
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun journalDao(): JournalDao
     abstract fun affirmationDao(): AffirmationDao
+    abstract fun chatDao(): ChatDao
 
     companion object {
         // Singleton — mencegah multiple instance database terbuka sekaligus
@@ -44,6 +47,31 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // Migration: tambah tabel chat_session_table dan chat_message_table
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS chat_session_table (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        doctor_name TEXT NOT NULL,
+                        doctor_emoji TEXT NOT NULL,
+                        last_message TEXT NOT NULL DEFAULT '',
+                        created_at INTEGER NOT NULL DEFAULT 0,
+                        updated_at INTEGER NOT NULL DEFAULT 0
+                    )
+                """.trimIndent())
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS chat_message_table (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        session_id INTEGER NOT NULL,
+                        message TEXT NOT NULL,
+                        is_from_user INTEGER NOT NULL DEFAULT 0,
+                        timestamp INTEGER NOT NULL DEFAULT 0
+                    )
+                """.trimIndent())
+            }
+        }
+
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -51,7 +79,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "ruang_tenang_database"
                 )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .addCallback(DatabaseCallback(context))
                     .build()
                 INSTANCE = instance

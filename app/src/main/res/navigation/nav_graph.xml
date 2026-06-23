@@ -20,4 +20,8 @@
         android:name="com.ruangtenang.ui.article.ArticleFragment"
         android:label="Artikel" />
 
+    <fragment android:id="@+id/counselingFragment"
+        android:name="com.ruangtenang.ui.counseling.CounselingFragment"
+        android:label="Konseling" />
+
 </navigation>

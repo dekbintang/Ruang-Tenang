@@ -168,54 +168,7 @@
                             android:textStyle="bold" />
                     </LinearLayout>
 
-                    <!-- Garis pembatas -->
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="64dp"
-                        android:background="#E2E8F0" />
 
-                    <!-- Hari Streak -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <FrameLayout
-                            android:id="@+id/frame_streak"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_stat_item"
-                            android:backgroundTint="#FFF7ED">
-
-                            <TextView
-                                android:id="@+id/tv_streak_days"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="0"
-                                android:textColor="#EA580C"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
-                        </FrameLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="🔥 Streak"
-                            android:textColor="@color/textSecondary"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- Garis pembatas -->
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="64dp"
-                        android:background="#E2E8F0" />
 
                     <!-- Mood Dominan -->
                     <LinearLayout
@@ -253,59 +206,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ── Streak Highlight Card ─────────────── -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_streak_highlight"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="#FFF7ED"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:padding="20dp">
-
-                    <TextView
-                        android:id="@+id/tv_streak_emoji_big"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🔥"
-                        android:textSize="36sp" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="16dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/tv_streak_highlight_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Belum Ada Streak"
-                            android:textColor="@color/textPrimary"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tv_streak_highlight_msg"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Tulis jurnalmu hari ini untuk memulai streak!"
-                            android:textColor="@color/textSecondary"
-                            android:textSize="13sp"
-                            android:lineSpacingExtra="2dp" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
             <!-- ── Menu Items Card ───────────────── -->
             <com.google.android.material.card.MaterialCardView
@@ -442,11 +343,29 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Tombol Keluar / Log Out -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_logout"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="32dp"
+                android:text="Keluar (Log Out)"
+                android:textAllCaps="false"
+                android:textColor="#EF4444"
+                android:textSize="16sp"
+                app:cornerRadius="16dp"
+                app:icon="@android:drawable/ic_lock_power_off"
+                app:iconGravity="textStart"
+                app:iconTint="#EF4444"
+                app:strokeColor="#FCA5A5"
+                app:strokeWidth="1.5dp" />
+
             <!-- Footer -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 android:gravity="center"
                 android:text="Made with ❤️ by Ruang Tenang"
                 android:textColor="@color/textSecondary"

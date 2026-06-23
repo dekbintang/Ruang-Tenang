@@ -13,3 +13,19 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Android build outputs
+app/build/
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+
+# Security - Ignore Keystore files
+*.jks
+*.keystore
+
+# Logs
+log.txt
+*.log

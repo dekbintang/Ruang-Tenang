@@ -59,9 +59,12 @@ class JournalFragment : Fragment() {
         // Observasi hasil pencarian (reaktif)
         viewModel.searchResults.observe(viewLifecycleOwner) { journals ->
             adapter.submitList(journals)
-            // Tampilkan empty state jika list kosong
+            val isEmpty = journals.isEmpty()
+            // Tampilkan empty state dan sembunyikan RecyclerView jika list kosong
             view.findViewById<View>(R.id.layout_empty_state).visibility =
-                if (journals.isEmpty()) View.VISIBLE else View.GONE
+                if (isEmpty) View.VISIBLE else View.GONE
+            view.findViewById<View>(R.id.rv_journals).visibility =
+                if (isEmpty) View.GONE else View.VISIBLE
         }
     }
 
@@ -78,6 +81,18 @@ class JournalFragment : Fragment() {
 
     private fun setupFab(view: View) {
         view.findViewById<ExtendedFloatingActionButton>(R.id.fab_new_journal).setOnClickListener {
+            val session = com.ruangtenang.data.SessionManager(requireContext())
+            if (!session.isLoggedIn) {
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Login Required")
+                    .setMessage("Fitur Jurnal hanya tersedia untuk pengguna yang sudah login. Silakan login terlebih dahulu.")
+                    .setPositiveButton("Login") { _, _ ->
+                        startActivity(Intent(requireContext(), com.ruangtenang.ui.auth.AuthActivity::class.java))
+                    }
+                    .setNegativeButton("Batal", null)
+                    .show()
+                return@setOnClickListener
+            }
             startActivity(Intent(requireContext(), AddEditJournalActivity::class.java))
         }
     }
