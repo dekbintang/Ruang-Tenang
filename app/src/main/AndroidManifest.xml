@@ -13,7 +13,7 @@
 
         <!-- SplashActivity (Entry Point) -->
         <activity
-            android:name=".ui.SplashActivity"
+            android:name=".ui.splash.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,4 +1,4 @@
-package com.ruangtenang.ui
+package com.ruangtenang.ui.splash
 
 import android.content.Intent
 import android.os.Bundle
