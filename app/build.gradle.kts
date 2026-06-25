@@ -19,11 +19,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Inject GNews API key dari local.properties
-        val localProps = Properties()
-        val localPropsFile = rootProject.file("local.properties")
-        if (localPropsFile.exists()) localProps.load(localPropsFile.inputStream())
-        buildConfigField("String", "GNEWS_API_KEY", "\"${localProps.getProperty("GNEWS_API_KEY", "")}\"")
+
     }
 
     buildFeatures {
@@ -82,14 +78,6 @@ dependencies {
 
     // ── Gson (parsing seed JSON dari assets/) ─────────────────────────
     implementation("com.google.code.gson:gson:2.10.1")
-
-    // ── Retrofit + OkHttp (HTTP client untuk GNews API) ────────────
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-
-    // ── Glide (load thumbnail gambar artikel dari URL) ──────────────
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    kapt("com.github.bumptech.glide:compiler:4.16.0")
 }
+
+

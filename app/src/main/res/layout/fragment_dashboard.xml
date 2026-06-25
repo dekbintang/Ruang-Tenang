@@ -440,33 +440,7 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-            <!-- ─── Artikel ───────────────────────────────── -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:orientation="vertical">
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Artikel Inspiratif" android:textColor="@color/textPrimary" android:textSize="16sp" android:textStyle="bold" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Temukan ketenangan baru" android:textColor="@color/textSecondary" android:textSize="12sp" android:textStyle="italic" />
-                    </LinearLayout>
-                    <TextView android:id="@+id/tv_see_all_articles" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/bg_chip" android:clickable="true" android:focusable="true" android:foreground="?attr/selectableItemBackground" android:paddingHorizontal="12dp" android:paddingVertical="6dp" android:text="Lihat Semua" android:textColor="@color/primary" android:textSize="12sp" android:textStyle="bold" />
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_dashboard_articles"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginHorizontal="-20dp"
-                    android:paddingHorizontal="20dp"
-                    android:clipToPadding="false"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_article" />
-            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>

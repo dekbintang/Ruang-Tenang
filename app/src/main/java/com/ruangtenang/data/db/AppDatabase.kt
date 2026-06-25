@@ -9,8 +9,6 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.ruangtenang.data.entity.Affirmation
-import com.ruangtenang.data.entity.ChatMessageEntity
-import com.ruangtenang.data.entity.ChatSession
 import com.ruangtenang.data.entity.Journal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +23,7 @@ import kotlinx.coroutines.launch
  * Migration dari versi 1 → 2: drop tabel article_table (tidak dipakai lagi)
  */
 @Database(
-    entities = [Journal::class, Affirmation::class, ChatSession::class, ChatMessageEntity::class],
+    entities = [Journal::class, Affirmation::class],
     version = 3,
     exportSchema = false
 )
@@ -33,7 +31,6 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun journalDao(): JournalDao
     abstract fun affirmationDao(): AffirmationDao
-    abstract fun chatDao(): ChatDao
 
     companion object {
         // Singleton — mencegah multiple instance database terbuka sekaligus

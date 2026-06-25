@@ -15,13 +15,5 @@
         android:icon="@drawable/ic_action_journal"
         android:title="Jurnal" />
 
-    <item
-        android:id="@+id/articleFragment"
-        android:icon="@drawable/ic_article"
-        android:title="Ruang Baca" />
 
-    <item
-        android:id="@+id/counselingFragment"
-        android:icon="@drawable/ic_counseling"
-        android:title="Konseling" />
 </menu>

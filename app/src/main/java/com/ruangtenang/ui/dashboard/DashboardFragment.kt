@@ -13,9 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ruangtenang.R
 
-import com.ruangtenang.ui.article.ArticleViewModel
-import com.ruangtenang.ui.article.ArticleWebViewActivity
-import com.ruangtenang.ui.article.DashboardArticleAdapter
+
 import com.ruangtenang.ui.journal.AddEditJournalActivity
 import com.ruangtenang.ui.journal.JournalAdapter
 import com.ruangtenang.ui.journal.JournalDetailActivity
@@ -26,9 +24,7 @@ import java.util.Calendar
 class DashboardFragment : Fragment() {
 
     private lateinit var viewModel: DashboardViewModel
-    private lateinit var articleViewModel: ArticleViewModel
     private lateinit var journalViewModel: JournalViewModel
-    private lateinit var articleAdapter: DashboardArticleAdapter
     private lateinit var journalAdapter: JournalAdapter
 
     override fun onCreateView(
@@ -43,7 +39,6 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel        = ViewModelProvider(this)[DashboardViewModel::class.java]
-        articleViewModel = ViewModelProvider(requireActivity())[ArticleViewModel::class.java]
         journalViewModel = ViewModelProvider(requireActivity())[JournalViewModel::class.java]
 
         setupGreeting(view)
@@ -52,7 +47,7 @@ class DashboardFragment : Fragment() {
         setupEmojiShortcuts(view)
         setupActions(view)
         setupRecentJournals(view)
-        setupArticles(view)
+
     }
 
 
@@ -172,32 +167,7 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    // ── Artikel inspiratif (horizontal) ──────────────────────────────────
-    private fun setupArticles(view: View) {
-        val rvArticles = view.findViewById<RecyclerView>(R.id.rv_dashboard_articles) ?: return
 
-        articleAdapter = DashboardArticleAdapter { article ->
-            startActivity(
-                Intent(requireContext(), ArticleWebViewActivity::class.java).apply {
-                    putExtra(ArticleWebViewActivity.EXTRA_URL, article.url)
-                    putExtra(ArticleWebViewActivity.EXTRA_TITLE, article.title)
-                }
-            )
-        }
-
-        rvArticles.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        rvArticles.adapter = articleAdapter
-
-        articleViewModel.articles.observe(viewLifecycleOwner) { articles ->
-            if (!articles.isNullOrEmpty()) {
-                articleAdapter.submitList(articles.take(5))
-            }
-        }
-
-        view.findViewById<View>(R.id.tv_see_all_articles)?.setOnClickListener {
-            Toast.makeText(requireContext(), "Buka tab Ruang Baca untuk melihat semua.", Toast.LENGTH_SHORT).show()
-        }
-    }
 
     private fun openAddJournal(moodKey: String?) {
         val session = com.ruangtenang.data.SessionManager(requireContext())

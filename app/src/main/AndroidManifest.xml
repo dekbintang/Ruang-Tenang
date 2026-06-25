@@ -39,27 +39,10 @@
         <!-- Activity untuk melihat detail/preview jurnal lengkap -->
         <activity android:name=".ui.journal.JournalDetailActivity" />
 
-        <!-- Activity untuk membaca artikel lengkap (WebView in-app) -->
-        <activity
-            android:name=".ui.article.ArticleWebViewActivity"
-            android:exported="false" />
-
         <!-- Halaman Profil Pengguna -->
         <activity
             android:name=".ui.profile.ProfileActivity"
             android:exported="false" />
-
-        <!-- Halaman Pembayaran Konseling -->
-        <activity
-            android:name=".ui.counseling.PaymentActivity"
-            android:exported="false" />
-
-        <!-- Ruang Chat Konseling -->
-        <activity
-            android:name=".ui.counseling.ChatRoomActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
     </application>
 
 </manifest>

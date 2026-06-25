@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.ruangtenang.data.db.AppDatabase
 import com.ruangtenang.data.entity.Affirmation
-import com.ruangtenang.data.repository.ArticleRepository
+import com.ruangtenang.data.db.AffirmationDao
 import com.ruangtenang.data.repository.JournalRepository
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -17,7 +17,7 @@ import java.util.Locale
 
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val articleRepository: ArticleRepository
+    private val affirmationDao: AffirmationDao
     private val journalRepository: JournalRepository
 
     private val _randomAffirmation = MutableLiveData<Affirmation?>()
@@ -34,7 +34,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     init {
         val db = AppDatabase.getDatabase(application)
-        articleRepository = ArticleRepository(application.applicationContext, db.affirmationDao())
+        affirmationDao = db.affirmationDao()
         journalRepository = JournalRepository(db.journalDao())
 
         loadRandomAffirmation()
@@ -44,7 +44,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun loadRandomAffirmation() {
         viewModelScope.launch {
-            _randomAffirmation.postValue(articleRepository.getRandomAffirmation())
+            _randomAffirmation.postValue(affirmationDao.getRandomAffirmation())
         }
     }
 
