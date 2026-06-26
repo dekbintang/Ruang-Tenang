@@ -10,9 +10,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.ruangtenang.MainActivity
 import com.ruangtenang.R
-import com.ruangtenang.data.SessionManager
-import com.ruangtenang.ui.onboarding.OnboardingActivity
-import com.ruangtenang.ui.auth.AuthActivity
 
 class SplashActivity : AppCompatActivity() {
 
@@ -33,16 +30,11 @@ class SplashActivity : AppCompatActivity() {
         title.startAnimation(textAnim)
         subtitle.startAnimation(textAnim)
 
-        // Navigasi setelah 2.5 detik
+        // Navigasi setelah 2.5 detik langsung ke MainActivity
         Handler(Looper.getMainLooper()).postDelayed({
-            val session = SessionManager(this)
-            val intent = when {
-                !session.isOnboardingCompleted -> Intent(this, OnboardingActivity::class.java)
-                !session.isLoggedIn && !session.isGuestMode -> Intent(this, AuthActivity::class.java)
-                else -> Intent(this, MainActivity::class.java)
-            }
-            startActivity(intent)
+            startActivity(Intent(this, MainActivity::class.java))
             finish()
         }, 2500)
     }
 }
+

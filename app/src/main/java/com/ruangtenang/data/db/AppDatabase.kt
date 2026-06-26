@@ -4,70 +4,27 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.ruangtenang.data.entity.Affirmation
 import com.ruangtenang.data.entity.Journal
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 /**
  * Room Database RuangTenang
  *
- * Versi 2: Article tidak lagi disimpan di Room (digantikan oleh GNews API).
- * Journal dan Affirmation tetap ada di Room DB.
- *
- * Migration dari versi 1 → 2: drop tabel article_table (tidak dipakai lagi)
+ * Versi 4: Aplikasi disederhanakan menjadi Diary CRUD murni.
+ * Hanya entitas Journal yang digunakan.
  */
 @Database(
-    entities = [Journal::class, Affirmation::class],
-    version = 3,
+    entities = [Journal::class],
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun journalDao(): JournalDao
-    abstract fun affirmationDao(): AffirmationDao
 
     companion object {
         // Singleton — mencegah multiple instance database terbuka sekaligus
         @Volatile
         private var INSTANCE: AppDatabase? = null
-
-        // Migration: hapus tabel article_table (tidak dipakai lagi sejak v2)
-        private val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("DROP TABLE IF EXISTS article_table")
-            }
-        }
-
-        // Migration: tambah tabel chat_session_table dan chat_message_table
-        private val MIGRATION_2_3 = object : Migration(2, 3) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("""
-                    CREATE TABLE IF NOT EXISTS chat_session_table (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                        doctor_name TEXT NOT NULL,
-                        doctor_emoji TEXT NOT NULL,
-                        last_message TEXT NOT NULL DEFAULT '',
-                        created_at INTEGER NOT NULL DEFAULT 0,
-                        updated_at INTEGER NOT NULL DEFAULT 0
-                    )
-                """.trimIndent())
-                database.execSQL("""
-                    CREATE TABLE IF NOT EXISTS chat_message_table (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                        session_id INTEGER NOT NULL,
-                        message TEXT NOT NULL,
-                        is_from_user INTEGER NOT NULL DEFAULT 0,
-                        timestamp INTEGER NOT NULL DEFAULT 0
-                    )
-                """.trimIndent())
-            }
-        }
 
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
@@ -76,54 +33,11 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "ruang_tenang_database"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
-                    .addCallback(DatabaseCallback(context))
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance
             }
         }
-    }
-
-    // ────────────────────────────────────────────────────────────────────────
-    // Database Callback: Dipanggil SEKALI saat database pertama kali dibuat
-    // Hanya seeding Affirmasi (Artikel sekarang dari API)
-    // ────────────────────────────────────────────────────────────────────────
-    private class DatabaseCallback(
-        private val context: Context
-    ) : RoomDatabase.Callback() {
-
-        override fun onCreate(db: SupportSQLiteDatabase) {
-            super.onCreate(db)
-            INSTANCE?.let { database ->
-                CoroutineScope(Dispatchers.IO).launch {
-                    seedAffirmations(database.affirmationDao())
-                }
-            }
-        }
-
-        // ── Seeding Afirmasi ──────────────────────────────────────────────
-        private suspend fun seedAffirmations(affirmationDao: AffirmationDao) {
-            if (affirmationDao.getAffirmationCount() > 0) return
-
-            try {
-                val jsonString = context.assets
-                    .open("seed_affirmations.json")
-                    .bufferedReader()
-                    .use { it.readText() }
-
-                val type = object : TypeToken<List<Affirmation>>() {}.type
-                val affirmations: List<Affirmation> = Gson().fromJson(jsonString, type)
-                affirmationDao.insertAll(affirmations)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                affirmationDao.insertAll(getFallbackAffirmations())
-            }
-        }
-
-        private fun getFallbackAffirmations(): List<Affirmation> = listOf(
-            Affirmation(quote = "Kamu cukup. Tepat seperti adanya kamu sekarang.", author = "Ruang Tenang"),
-            Affirmation(quote = "Selamat datang di ruang tenangmu. Di sini, kamu aman.", author = "Ruang Tenang")
-        )
     }
 }

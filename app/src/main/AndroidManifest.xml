@@ -21,11 +21,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.onboarding.OnboardingActivity" android:exported="false"/>
-        <activity android:name=".ui.auth.AuthActivity" android:exported="false"/>
-        <activity android:name=".ui.auth.RegisterActivity" android:exported="false"/>
-
-        <!-- MainActivity (Halaman Utama yang menampung ke-4 Menu) -->
+        <!-- MainActivity (Halaman Utama yang menampung Daftar Jurnal) -->
         <activity
             android:name=".MainActivity"
             android:exported="true" />
@@ -39,10 +35,6 @@
         <!-- Activity untuk melihat detail/preview jurnal lengkap -->
         <activity android:name=".ui.journal.JournalDetailActivity" />
 
-        <!-- Halaman Profil Pengguna -->
-        <activity
-            android:name=".ui.profile.ProfileActivity"
-            android:exported="false" />
     </application>
 
 </manifest>

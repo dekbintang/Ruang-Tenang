@@ -101,8 +101,8 @@ class JournalDetailActivity : AppCompatActivity() {
         // Hapus
         findViewById<ImageButton>(R.id.btn_delete).setOnClickListener {
             AlertDialog.Builder(this)
-                .setTitle("Hapus Jurnal")
-                .setMessage("Yakin ingin menghapus jurnal ini?")
+                .setTitle("Hapus Diary")
+                .setMessage("Yakin ingin menghapus diary ini?")
                 .setPositiveButton("Hapus") { _, _ ->
                     viewModel.deleteJournalById(journalId)
                     finish()

@@ -3,7 +3,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("kotlin-kapt")   // ← Kotlin DSL: pakai tanda kurung & petik ganda
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -62,7 +62,7 @@ dependencies {
     // ── Room Database ──────────────────────────────────────────────────
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
 
     // ── Lifecycle (ViewModel + LiveData) ───────────────────────────────
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")

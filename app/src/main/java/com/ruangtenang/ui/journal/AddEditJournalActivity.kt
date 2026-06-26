@@ -122,7 +122,7 @@ class AddEditJournalActivity : AppCompatActivity() {
 
     private fun loadExistingJournal(id: Int) {
         // Ganti title toolbar untuk mode edit
-        findViewById<TextView>(R.id.tv_toolbar_title).text = "Edit Jurnal"
+        findViewById<TextView>(R.id.tv_toolbar_title).text = "Edit Diary"
 
         // Gunakan lifecycleScope (tersedia karena AppCompatActivity implements LifecycleOwner)
         lifecycleScope.launch {
@@ -188,7 +188,7 @@ class AddEditJournalActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             if (content.isEmpty()) {
-                etContent.error = "Isi jurnal tidak boleh kosong"
+                etContent.error = "Isi diary tidak boleh kosong"
                 return@setOnClickListener
             }
 
@@ -217,7 +217,7 @@ class AddEditJournalActivity : AppCompatActivity() {
                 viewModel.insertJournal(newJournal)
             }
 
-            Toast.makeText(this, "Jurnal tersimpan 💙", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Diary tersimpan 💙", Toast.LENGTH_SHORT).show()
             finish()
         }
     }
