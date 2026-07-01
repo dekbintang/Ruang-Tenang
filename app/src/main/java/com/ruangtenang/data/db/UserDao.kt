@@ -12,6 +12,12 @@ interface UserDao {
     @Query("SELECT * FROM user_table WHERE username = :username LIMIT 1")
     suspend fun getUserByUsername(username: String): User?
 
+    @Query("SELECT * FROM user_table WHERE id = :userId LIMIT 1")
+    suspend fun getUserById(userId: Int): User?
+
+    @Update
+    suspend fun updateUser(user: User)
+
     @Query("DELETE FROM user_table WHERE id = :userId")
     suspend fun deleteUser(userId: Int)
 
