@@ -18,8 +18,8 @@ class JournalRepository(private val journalDao: JournalDao) {
         return journalDao.getMoodsForMonth(monthPattern)
     }
 
-    suspend fun getJournalByDate(dateString: String): Journal? {
-        return journalDao.getJournalByDate(dateString)
+    suspend fun getJournalsByDate(dateString: String): List<Journal> {
+        return journalDao.getJournalsByDate(dateString)
     }
 
     suspend fun getJournalById(id: Int): Journal? {

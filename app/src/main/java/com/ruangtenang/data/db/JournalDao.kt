@@ -26,8 +26,9 @@ interface JournalDao {
     suspend fun getMoodsForMonth(monthPattern: String): List<JournalCalendarItem>
 
     // Ambil detail jurnal berdasarkan tanggal spesifik (untuk pop-up kalender)
-    @Query("SELECT * FROM journal_table WHERE date_string = :dateString LIMIT 1")
-    suspend fun getJournalByDate(dateString: String): Journal?
+    // Ambil SEMUA jurnal di tanggal tertentu (bisa lebih dari satu per hari)
+    @Query("SELECT * FROM journal_table WHERE date_string = :dateString ORDER BY timestamp DESC")
+    suspend fun getJournalsByDate(dateString: String): List<Journal>
 
     // Ambil jurnal by ID (untuk halaman detail/edit)
     @Query("SELECT * FROM journal_table WHERE id = :id")
