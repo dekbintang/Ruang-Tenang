@@ -10,6 +10,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.ruangtenang.MainActivity
 import com.ruangtenang.R
+import com.ruangtenang.data.SessionManager
+import com.ruangtenang.ui.auth.LoginActivity
 
 class SplashActivity : AppCompatActivity() {
 
@@ -21,20 +23,23 @@ class SplashActivity : AppCompatActivity() {
         val title = findViewById<TextView>(R.id.tv_splash_title)
         val subtitle = findViewById<TextView>(R.id.tv_splash_subtitle)
 
-        // Animasi logo
         val logoAnim = AnimationUtils.loadAnimation(this, R.anim.splash_logo_anim)
         logo.startAnimation(logoAnim)
 
-        // Animasi teks
         val textAnim = AnimationUtils.loadAnimation(this, R.anim.splash_text_anim)
         title.startAnimation(textAnim)
         subtitle.startAnimation(textAnim)
 
-        // Navigasi setelah 2.5 detik langsung ke MainActivity
+        val session = SessionManager(this)
+
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, MainActivity::class.java))
+            val nextActivity = if (session.isLoggedIn()) {
+                MainActivity::class.java
+            } else {
+                LoginActivity::class.java
+            }
+            startActivity(Intent(this, nextActivity))
             finish()
         }, 2500)
     }
 }
-

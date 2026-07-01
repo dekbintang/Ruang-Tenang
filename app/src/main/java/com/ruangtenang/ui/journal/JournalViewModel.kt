@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import com.ruangtenang.data.SessionManager
 import com.ruangtenang.data.db.AppDatabase
 import com.ruangtenang.data.entity.Journal
 import com.ruangtenang.data.repository.JournalRepository
@@ -13,21 +14,21 @@ import kotlinx.coroutines.launch
 
 class JournalViewModel(application: Application) : AndroidViewModel(application) {
 
-    // Inisialisasi repository di sini dulu, SEBELUM dipakai oleh switchMap
     private val repository: JournalRepository = JournalRepository(
         AppDatabase.getDatabase(application).journalDao()
     )
 
-    // Semua jurnal (LiveData — otomatis update RecyclerView)
-    val allJournals: LiveData<List<Journal>> = repository.allJournals
+    private val session = SessionManager(application)
+    private val userId: Int = session.getUserId()
 
-    // Query pencarian — reactive terhadap perubahan keyword
+    val allJournals: LiveData<List<Journal>> = repository.getAllJournals(userId)
+
     private val _searchQuery = MutableLiveData<String>("")
     val searchResults: LiveData<List<Journal>> = _searchQuery.switchMap { keyword ->
         if (keyword.isBlank()) {
-            repository.allJournals
+            repository.getAllJournals(userId)
         } else {
-            repository.searchJournals(keyword)
+            repository.searchJournals(userId, keyword)
         }
     }
 

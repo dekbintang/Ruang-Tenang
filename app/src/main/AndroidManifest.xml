@@ -21,18 +21,18 @@
             </intent-filter>
         </activity>
 
-        <!-- MainActivity (Halaman Utama yang menampung Daftar Jurnal) -->
+        <!-- BARU: Login & Register -->
+        <activity android:name=".ui.auth.LoginActivity" android:exported="false" />
+        <activity android:name=".ui.auth.RegisterActivity" android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true" />
 
-        <!-- Activity untuk form tambah dan edit jurnal -->
-        <!-- windowSoftInputMode="adjustResize" memastikan form tidak tertutup keyboard -->
         <activity
             android:name=".ui.journal.AddEditJournalActivity"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Activity untuk melihat detail/preview jurnal lengkap -->
         <activity android:name=".ui.journal.JournalDetailActivity" />
         <activity android:name=".ui.calendar.CalendarActivity" />
 

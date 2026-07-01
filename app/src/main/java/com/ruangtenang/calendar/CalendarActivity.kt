@@ -23,6 +23,7 @@ import com.ruangtenang.ui.journal.JournalDetailActivity
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import com.ruangtenang.data.SessionManager
 
 class CalendarActivity : AppCompatActivity() {
 
@@ -33,6 +34,9 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var layoutEntryEmpty: LinearLayout
     private lateinit var btnAddForDate: Button
 
+    private lateinit var session: SessionManager
+    private var userId: Int = 0
+
     private val calendar = Calendar.getInstance()
     private var selectedDate: String =
         SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
@@ -41,6 +45,9 @@ class CalendarActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar)
+
+        session = SessionManager(this)
+        userId = session.getUserId()
 
         bindViews()
         findViewById<ImageButton>(R.id.btn_back).setOnClickListener { finish() }
@@ -78,7 +85,7 @@ class CalendarActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val db = AppDatabase.getDatabase(this@CalendarActivity)
-            val items = db.journalDao().getMoodsForMonth(monthPattern)
+            val items = db.journalDao().getMoodsForMonth(userId, monthPattern)
             journalDatesInMonth = items.map { it.date_string }.toSet()
             buildGrid(monthKey)
             showSelectedDate()
@@ -159,7 +166,7 @@ class CalendarActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val db = AppDatabase.getDatabase(this@CalendarActivity)
-            val journals = db.journalDao().getJournalsByDate(selectedDate)
+            val journals = db.journalDao().getJournalsByDate(userId, selectedDate)
 
             if (journals.isNotEmpty()) {
                 layoutEntriesContainer.visibility = View.VISIBLE
@@ -177,7 +184,6 @@ class CalendarActivity : AppCompatActivity() {
         }
     }
 
-    // Menampilkan satu card per diary, pakai layout item_journal.xml yang sudah ada
     private fun renderEntries(journals: List<Journal>) {
         layoutEntriesContainer.removeAllViews()
         val inflater = LayoutInflater.from(this)

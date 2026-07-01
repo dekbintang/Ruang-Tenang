@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.ruangtenang.R
+import com.ruangtenang.data.SessionManager
 import com.ruangtenang.data.db.AppDatabase
 import com.ruangtenang.data.entity.Journal
 import java.text.SimpleDateFormat
@@ -17,11 +18,11 @@ class AddEditJournalActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_PRESET_MOOD = "extra_preset_mood"
         const val EXTRA_JOURNAL_ID  = "extra_journal_id"
-        // BARU: dipakai saat form dibuka dari halaman Kalender
         const val EXTRA_TARGET_DATE = "extra_target_date"
     }
 
     private lateinit var viewModel: JournalViewModel
+    private lateinit var session: SessionManager
 
     private lateinit var etTitle: EditText
     private lateinit var etContent: EditText
@@ -43,7 +44,6 @@ class AddEditJournalActivity : AppCompatActivity() {
 
     private var selectedMood: String = "neutral"
     private var editJournalId: Int? = null
-    // BARU: menyimpan tanggal yang dipilih dari Kalender (kalau ada)
     private var targetDate: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +51,7 @@ class AddEditJournalActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_edit_journal)
 
         viewModel = ViewModelProvider(this)[JournalViewModel::class.java]
+        session = SessionManager(this)
 
         bindViews()
         setupMoodSelector()
@@ -98,7 +99,6 @@ class AddEditJournalActivity : AppCompatActivity() {
     }
 
     private fun handleIncomingIntent() {
-        // BARU: baca tanggal titipan dari Kalender (kalau ada)
         targetDate = intent.getStringExtra(EXTRA_TARGET_DATE)
 
         val presetMood = intent.getStringExtra(EXTRA_PRESET_MOOD)
@@ -168,6 +168,7 @@ class AddEditJournalActivity : AppCompatActivity() {
             val title   = etTitle.text.toString().trim()
             val content = etContent.text.toString().trim()
 
+            // Validasi — JANGAN dihapus, supaya user tidak bisa simpan diary kosong
             if (title.isEmpty()) {
                 etTitle.error = "Judul tidak boleh kosong"
                 return@setOnClickListener
@@ -177,33 +178,38 @@ class AddEditJournalActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // BARU: pakai targetDate kalau ada (dari Kalender), kalau tidak pakai hari ini
+            // Tentukan tanggal: pakai targetDate (dari Kalender) kalau ada, kalau tidak pakai hari ini
             val today = targetDate
                 ?: SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
             if (editJournalId != null) {
-                val updated = Journal(
-                    id         = editJournalId!!,
-                    title      = title,
-                    content    = content,
-                    moodTag    = selectedMood,
-                    dateString = today,
-                    timestamp  = System.currentTimeMillis()
-                )
-                viewModel.updateJournal(updated)
+                lifecycleScope.launch {
+                    val db = AppDatabase.getDatabase(this@AddEditJournalActivity)
+                    val existing = db.journalDao().getJournalById(editJournalId!!)
+                    val updated = existing!!.copy(
+                        title = title,
+                        content = content,
+                        moodTag = selectedMood,
+                        dateString = today,
+                        timestamp = System.currentTimeMillis()
+                    )
+                    viewModel.updateJournal(updated)
+                    Toast.makeText(this@AddEditJournalActivity, "Diary tersimpan 💙", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
             } else {
                 val newJournal = Journal(
-                    title      = title,
-                    content    = content,
-                    moodTag    = selectedMood,
+                    userId = session.getUserId(),
+                    title = title,
+                    content = content,
+                    moodTag = selectedMood,
                     dateString = today,
-                    timestamp  = System.currentTimeMillis()
+                    timestamp = System.currentTimeMillis()
                 )
                 viewModel.insertJournal(newJournal)
+                Toast.makeText(this, "Diary tersimpan 💙", Toast.LENGTH_SHORT).show()
+                finish()
             }
-
-            Toast.makeText(this, "Diary tersimpan 💙", Toast.LENGTH_SHORT).show()
-            finish()
         }
     }
 }

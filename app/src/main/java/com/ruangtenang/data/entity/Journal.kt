@@ -9,21 +9,21 @@ data class Journal(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
+    @ColumnInfo(name = "user_id")
+    val userId: Int, // BARU — pemilik jurnal ini
+
     @ColumnInfo(name = "title")
     val title: String,
 
     @ColumnInfo(name = "content")
     val content: String,
 
-    // Nilai: "happy" | "calm" | "neutral" | "sad" | "anxious"
     @ColumnInfo(name = "mood_tag")
     val moodTag: String,
 
-    // Format: "YYYY-MM-DD" — digunakan untuk query kalender
     @ColumnInfo(name = "date_string")
     val dateString: String,
 
-    // Unix timestamp (ms) — digunakan untuk sorting terbaru
     @ColumnInfo(name = "timestamp")
     val timestamp: Long = System.currentTimeMillis()
 )

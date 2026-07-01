@@ -7,19 +7,20 @@ import com.ruangtenang.data.entity.Journal
 
 class JournalRepository(private val journalDao: JournalDao) {
 
-    // LiveData otomatis update UI saat data berubah
-    val allJournals: LiveData<List<Journal>> = journalDao.getAllJournals()
-
-    fun searchJournals(keyword: String): LiveData<List<Journal>> {
-        return journalDao.searchJournals(keyword)
+    fun getAllJournals(userId: Int): LiveData<List<Journal>> {
+        return journalDao.getAllJournals(userId)
     }
 
-    suspend fun getMoodsForMonth(monthPattern: String): List<JournalCalendarItem> {
-        return journalDao.getMoodsForMonth(monthPattern)
+    fun searchJournals(userId: Int, keyword: String): LiveData<List<Journal>> {
+        return journalDao.searchJournals(userId, keyword)
     }
 
-    suspend fun getJournalsByDate(dateString: String): List<Journal> {
-        return journalDao.getJournalsByDate(dateString)
+    suspend fun getMoodsForMonth(userId: Int, monthPattern: String): List<JournalCalendarItem> {
+        return journalDao.getMoodsForMonth(userId, monthPattern)
+    }
+
+    suspend fun getJournalsByDate(userId: Int, dateString: String): List<Journal> {
+        return journalDao.getJournalsByDate(userId, dateString)
     }
 
     suspend fun getJournalById(id: Int): Journal? {
@@ -40,5 +41,9 @@ class JournalRepository(private val journalDao: JournalDao) {
 
     suspend fun deleteJournalById(id: Int) {
         journalDao.deleteJournalById(id)
+    }
+
+    suspend fun deleteAllByUser(userId: Int) {
+        journalDao.deleteAllByUser(userId)
     }
 }
