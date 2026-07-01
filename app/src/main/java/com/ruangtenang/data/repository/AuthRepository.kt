@@ -11,7 +11,6 @@ class AuthRepository(private val userDao: UserDao) {
         return bytes.joinToString("") { "%02x".format(it) }
     }
 
-    // Return null kalau username sudah dipakai, atau User baru kalau sukses
     suspend fun register(username: String, password: String): User? {
         val existing = userDao.getUserByUsername(username)
         if (existing != null) return null
@@ -24,7 +23,6 @@ class AuthRepository(private val userDao: UserDao) {
         return newUser.copy(id = id.toInt())
     }
 
-    // Return User kalau berhasil, null kalau username/password salah
     suspend fun login(username: String, password: String): User? {
         val user = userDao.getUserByUsername(username) ?: return null
         return if (user.passwordHash == hashPassword(password)) user else null
@@ -42,5 +40,16 @@ class AuthRepository(private val userDao: UserDao) {
 
     suspend fun logoutGuest(userId: Int) {
         userDao.deleteUser(userId)
+    }
+
+    suspend fun getUserById(userId: Int): User? {
+        return userDao.getUserById(userId)
+    }
+
+    suspend fun updateProfile(userId: Int, age: Int?, photoUri: String?): Boolean {
+        val user = userDao.getUserById(userId) ?: return false
+        val updated = user.copy(age = age, photoUri = photoUri)
+        userDao.updateUser(updated)
+        return true
     }
 }
