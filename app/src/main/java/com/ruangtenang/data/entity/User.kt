@@ -16,5 +16,11 @@ data class User(
     val passwordHash: String,
 
     @ColumnInfo(name = "is_guest")
-    val isGuest: Boolean = false
+    val isGuest: Boolean = false,
+
+    @ColumnInfo(name = "age")
+    val age: Int? = null,
+
+    @ColumnInfo(name = "photo_uri")
+    val photoUri: String? = null
 )
