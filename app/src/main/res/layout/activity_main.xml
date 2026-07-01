@@ -44,13 +44,13 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/btn_logout"
+                android:id="@+id/btn_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Logout"
+                android:text="👤 Profil"
                 android:textSize="12sp"
-                android:backgroundTint="#EF5350"
-                android:textColor="#FFFFFF"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="@color/primary"
                 android:minWidth="0dp"
                 android:paddingHorizontal="12dp" />
         </LinearLayout>
