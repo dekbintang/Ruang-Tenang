@@ -34,6 +34,7 @@
 
         <!-- Activity untuk melihat detail/preview jurnal lengkap -->
         <activity android:name=".ui.journal.JournalDetailActivity" />
+        <activity android:name=".ui.calendar.CalendarActivity" />
 
     </application>
 
