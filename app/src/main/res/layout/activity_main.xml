@@ -56,7 +56,7 @@
             android:clipToPadding="false"
             android:paddingHorizontal="16dp"
             android:paddingTop="8dp"
-            android:paddingBottom="88dp" />
+            android:paddingBottom="8dp" />
 
         <!-- Empty State -->
         <LinearLayout
@@ -88,24 +88,40 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
-                android:text="Ketuk tombol + di bawah untuk memulai."
+                android:text="Ketuk tombol di bawah untuk memulai."
                 android:textColor="#666666"
                 android:textSize="14sp" />
         </LinearLayout>
 
+        <!-- Bottom Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:background="@android:color/white"
+            android:elevation="8dp">
+
+            <Button
+                android:id="@+id/btn_open_calendar"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="📅 Kalender"
+                android:backgroundTint="#E0E0E0"
+                android:textColor="#333333" />
+
+            <Button
+                android:id="@+id/btn_new_journal"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:text="✏️ Tambah Diary"
+                android:backgroundTint="@color/primary"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
     </LinearLayout>
 
-    <!-- FAB Add Diary -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_new_journal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        app:backgroundTint="@color/primary"
-        app:tint="#FFFFFF"
-        android:src="@android:drawable/ic_input_add"
-        android:contentDescription="Tulis Diary Baru" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-

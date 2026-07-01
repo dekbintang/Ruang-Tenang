@@ -9,12 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ruangtenang.data.entity.Journal
 import com.ruangtenang.ui.journal.AddEditJournalActivity
 import com.ruangtenang.ui.journal.JournalAdapter
 import com.ruangtenang.ui.journal.JournalDetailActivity
 import com.ruangtenang.ui.journal.JournalViewModel
+import android.widget.Button
 
 class MainActivity : AppCompatActivity() {
 
@@ -72,8 +72,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupFab() {
-        findViewById<FloatingActionButton>(R.id.fab_new_journal).setOnClickListener {
+        findViewById<Button>(R.id.btn_new_journal).setOnClickListener {
             startActivity(Intent(this, AddEditJournalActivity::class.java))
+        }
+        findViewById<Button>(R.id.btn_open_calendar).setOnClickListener {
+            startActivity(Intent(this, com.ruangtenang.ui.calendar.CalendarActivity::class.java))
         }
     }
 
