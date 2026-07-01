@@ -15,12 +15,7 @@ import com.ruangtenang.ui.journal.JournalAdapter
 import com.ruangtenang.ui.journal.JournalDetailActivity
 import com.ruangtenang.ui.journal.JournalViewModel
 import android.widget.Button
-import com.ruangtenang.data.SessionManager
-import com.ruangtenang.data.db.AppDatabase
-import com.ruangtenang.data.repository.AuthRepository
-import com.ruangtenang.ui.auth.LoginActivity
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import com.ruangtenang.ui.profile.ProfileActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         setupSearchBar()
         setupFab()
-        setupLogout()
+        setupProfileButton()
     }
 
     private fun setupRecyclerView() {
@@ -97,24 +92,10 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton("Batal", null)
             .show()
     }
-    private fun setupLogout() {
-        findViewById<Button>(R.id.btn_logout).setOnClickListener {
-            val session = SessionManager(this)
-            val userId = session.getUserId()
-            val isGuest = session.isGuest()
 
-            lifecycleScope.launch {
-                if (isGuest) {
-                    val db = AppDatabase.getDatabase(this@MainActivity)
-                    val authRepo = AuthRepository(db.userDao())
-                    db.journalDao().deleteAllByUser(userId) // hapus semua jurnal guest
-                    authRepo.logoutGuest(userId) // hapus akun guest
-                }
-                session.clearSession()
-                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                finish()
-            }
+    private fun setupProfileButton() {
+        findViewById<Button>(R.id.btn_profile).setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
         }
     }
 }
-
