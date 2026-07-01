@@ -40,12 +40,24 @@ interface JournalDao {
     @Query("SELECT DISTINCT date_string FROM journal_table WHERE user_id = :userId ORDER BY date_string DESC")
     suspend fun getAllDateStrings(userId: Int): List<String>
 
-    // BARU — hapus semua jurnal milik user (dipakai saat guest logout)
     @Query("DELETE FROM journal_table WHERE user_id = :userId")
     suspend fun deleteAllByUser(userId: Int)
+
+    @Query("""
+        SELECT mood_tag, COUNT(*) as count 
+        FROM journal_table 
+        WHERE user_id = :userId AND timestamp >= :sinceTimestamp 
+        GROUP BY mood_tag
+    """)
+    suspend fun getMoodStats(userId: Int, sinceTimestamp: Long): List<MoodCount>
 }
 
 data class JournalCalendarItem(
     val date_string: String,
     val mood_tag: String
+)
+
+data class MoodCount(
+    val mood_tag: String,
+    val count: Int
 )
