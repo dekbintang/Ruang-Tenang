@@ -3,6 +3,7 @@ package com.ruangtenang.data.repository
 import androidx.lifecycle.LiveData
 import com.ruangtenang.data.db.JournalCalendarItem
 import com.ruangtenang.data.db.JournalDao
+import com.ruangtenang.data.db.MoodCount
 import com.ruangtenang.data.entity.Journal
 
 class JournalRepository(private val journalDao: JournalDao) {
@@ -45,5 +46,10 @@ class JournalRepository(private val journalDao: JournalDao) {
 
     suspend fun deleteAllByUser(userId: Int) {
         journalDao.deleteAllByUser(userId)
+    }
+
+    // BARU — statistik mood untuk halaman profil
+    suspend fun getMoodStats(userId: Int, sinceTimestamp: Long): List<MoodCount> {
+        return journalDao.getMoodStats(userId, sinceTimestamp)
     }
 }
