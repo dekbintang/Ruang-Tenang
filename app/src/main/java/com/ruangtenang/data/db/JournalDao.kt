@@ -13,8 +13,17 @@ interface JournalDao {
     @Query("SELECT * FROM journal_table WHERE user_id = :userId ORDER BY timestamp DESC")
     fun getAllJournals(userId: Int): LiveData<List<Journal>>
 
-    @Query("SELECT * FROM journal_table WHERE user_id = :userId AND title LIKE '%' || :keyword || '%' ORDER BY timestamp DESC")
+    @Query(" SELECT * FROM journal_table WHERE user_id = :userId AND (title LIKE '%' || :keyword || '%' OR content LIKE '%' || :keyword || '%') ORDER BY timestamp DESC")
     fun searchJournals(userId: Int, keyword: String): LiveData<List<Journal>>
+
+    @Query("""
+        SELECT * FROM journal_table 
+        WHERE user_id = :userId 
+        AND (title LIKE '%' || :keyword || '%' OR content LIKE '%' || :keyword || '%')
+        AND (:moodTag IS NULL OR mood_tag = :moodTag)
+        ORDER BY timestamp DESC
+    """)
+    fun searchAndFilterJournals(userId: Int, keyword: String, moodTag: String?): LiveData<List<Journal>>
 
     @Query("SELECT date_string, mood_tag FROM journal_table WHERE user_id = :userId AND date_string LIKE :monthPattern")
     suspend fun getMoodsForMonth(userId: Int, monthPattern: String): List<JournalCalendarItem>
