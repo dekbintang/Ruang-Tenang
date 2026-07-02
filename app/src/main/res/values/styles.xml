@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="InputField">
+        <item name="android:background">@drawable/selector_input_field</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textColorHint">#94A3B8</item>
+        <item name="android:layout_marginBottom">14dp</item>
+    </style>
+
     <style name="CalendarDayHeader">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">36dp</item>

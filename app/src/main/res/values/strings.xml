@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Ruang Tenang</string>
+
+    <string name="register_title">Buat Akun Baru</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_username_register">Nama (bebas diubah nanti)</string>
+    <string name="hint_password">Password (min. 6 karakter)</string>
+    <string name="hint_confirm_password">Konfirmasi Password</string>
+    <string name="action_register">Daftar</string>
+    <string name="go_to_login">Sudah punya akun? Login di sini</string>
 </resources>
