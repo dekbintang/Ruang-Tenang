@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.ruangtenang.R
 import com.ruangtenang.data.db.AppDatabase
 import com.ruangtenang.data.entity.Journal
+import com.ruangtenang.data.model.Mood
 import kotlinx.coroutines.launch
 
 class JournalDetailActivity : AppCompatActivity() {
@@ -38,10 +39,8 @@ class JournalDetailActivity : AppCompatActivity() {
     }
 
     private fun loadJournal(id: Int) {
-        // Gunakan lifecycleScope (extension dari AppCompatActivity via lifecycle-runtime-ktx)
         lifecycleScope.launch {
             val db = AppDatabase.getDatabase(this@JournalDetailActivity)
-            // getJournalById adalah suspend function, dipanggil di dalam coroutine — BENAR
             val journal = db.journalDao().getJournalById(id)
             journal?.let {
                 currentJournal = it
@@ -51,23 +50,15 @@ class JournalDetailActivity : AppCompatActivity() {
     }
 
     private fun displayJournal(journal: Journal) {
-        val (moodLabel, moodIcon) = when (journal.moodTag) {
-            "happy"   -> Pair("Senang", R.drawable.ic_mood_happy)
-            "calm"    -> Pair("Tenang", R.drawable.ic_mood_calm)
-            "neutral" -> Pair("Biasa",  R.drawable.ic_mood_neutral)
-            "sad"     -> Pair("Sedih",  R.drawable.ic_mood_sad)
-            "anxious" -> Pair("Cemas",  R.drawable.ic_mood_anxious)
-            "angry"   -> Pair("Marah",  R.drawable.ic_mood_angry)
-            "shy"     -> Pair("Malu",   R.drawable.ic_mood_shy)
-            "scared"  -> Pair("Takut",  R.drawable.ic_mood_scared)
-            "lazy"    -> Pair("Malas",  R.drawable.ic_mood_lazy)
-            else      -> Pair("",       R.drawable.ic_mood_neutral)
-        }
-        findViewById<android.widget.ImageView>(R.id.iv_detail_mood).setImageResource(moodIcon)
-        findViewById<android.widget.TextView>(R.id.tv_detail_mood_label).text = moodLabel
-        findViewById<android.widget.TextView>(R.id.tv_detail_date).text = formatDate(journal.dateString)
-        findViewById<android.widget.TextView>(R.id.tv_detail_title).text = journal.title
-        findViewById<android.widget.TextView>(R.id.tv_detail_content).text = journal.content
+        val mood = Mood.fromId(journal.moodTag)
+
+        // Pakai emoji untuk konsistensi
+        findViewById<TextView>(R.id.iv_detail_mood).text = mood.emoji
+        findViewById<TextView>(R.id.tv_detail_mood_label).text = mood.label
+
+        findViewById<TextView>(R.id.tv_detail_date).text = formatDate(journal.dateString)
+        findViewById<TextView>(R.id.tv_detail_title).text = journal.title
+        findViewById<TextView>(R.id.tv_detail_content).text = journal.content
     }
 
     private fun formatDate(dateString: String): String {
@@ -87,10 +78,8 @@ class JournalDetailActivity : AppCompatActivity() {
     }
 
     private fun setupButtons(journalId: Int) {
-        // Kembali
         findViewById<ImageButton>(R.id.btn_back).setOnClickListener { finish() }
 
-        // Edit — buka AddEditJournalActivity dengan journal ID
         findViewById<ImageButton>(R.id.btn_edit).setOnClickListener {
             val intent = android.content.Intent(this, AddEditJournalActivity::class.java)
             intent.putExtra(AddEditJournalActivity.EXTRA_JOURNAL_ID, journalId)
@@ -98,7 +87,6 @@ class JournalDetailActivity : AppCompatActivity() {
             finish()
         }
 
-        // Hapus
         findViewById<ImageButton>(R.id.btn_delete).setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle("Hapus Diary")

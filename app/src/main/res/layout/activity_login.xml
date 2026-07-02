@@ -1,55 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="32dp">
+    android:fillViewport="true"
+    android:background="@color/background">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ruang Tenang"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="32dp" />
-
-    <EditText
-        android:id="@+id/et_username"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username"
-        android:inputType="text"
-        android:layout_marginBottom="12dp" />
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp">
 
-    <EditText
-        android:id="@+id/et_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:layout_marginBottom="20dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ruang Tenang"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="@color/textPrimary" />
 
-    <Button
-        android:id="@+id/btn_login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:layout_marginBottom="12dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tempat aman untuk ceritamu"
+            android:textSize="13sp"
+            android:textColor="@color/textSecondary"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="32dp" />
 
-    <Button
-        android:id="@+id/btn_guest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Masuk sebagai Guest"
-        android:backgroundTint="@android:color/darker_gray"
-        android:layout_marginBottom="20dp" />
+        <EditText
+            android:id="@+id/et_username"
+            style="@style/InputField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Username"
+            android:inputType="text" />
 
-    <TextView
-        android:id="@+id/tv_go_register"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Belum punya akun? Daftar di sini"
-        android:textColor="@android:color/holo_blue_dark" />
+        <EditText
+            android:id="@+id/et_password"
+            style="@style/InputField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:layout_marginBottom="20dp" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Login"
+            android:backgroundTint="@color/primary"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btn_guest"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Masuk sebagai Guest"
+            android:backgroundTint="#E2E8F0"
+            android:textColor="@color/textPrimary"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:id="@+id/tv_go_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Belum punya akun? Daftar di sini"
+            android:textColor="@color/primary"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</ScrollView>

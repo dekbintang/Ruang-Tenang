@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.GridLayout
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.ruangtenang.R
 import com.ruangtenang.data.db.AppDatabase
 import com.ruangtenang.data.entity.Journal
+import com.ruangtenang.data.model.Mood
 import com.ruangtenang.ui.journal.AddEditJournalActivity
 import com.ruangtenang.ui.journal.JournalDetailActivity
 import kotlinx.coroutines.launch
@@ -32,6 +32,7 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var tvSelectedDateHeader: TextView
     private lateinit var layoutEntriesContainer: LinearLayout
     private lateinit var layoutEntryEmpty: LinearLayout
+    private lateinit var tvEntryEmptyMessage: TextView
     private lateinit var btnAddForDate: Button
 
     private lateinit var session: SessionManager
@@ -68,6 +69,7 @@ class CalendarActivity : AppCompatActivity() {
         tvSelectedDateHeader = findViewById(R.id.tv_selected_date_header)
         layoutEntriesContainer = findViewById(R.id.layout_entries_container)
         layoutEntryEmpty = findViewById(R.id.layout_entry_empty)
+        tvEntryEmptyMessage = findViewById(R.id.tv_entry_empty_message)
         btnAddForDate = findViewById(R.id.btn_add_for_date)
     }
 
@@ -110,36 +112,40 @@ class CalendarActivity : AppCompatActivity() {
             val isToday = dateString == todayString
             val isSelected = dateString == selectedDate
             val hasEntry = journalDatesInMonth.contains(dateString)
+            val isFuture = dateString > todayString
 
             val cell = TextView(this).apply {
                 text = day.toString()
                 gravity = Gravity.CENTER
                 textSize = 14f
-                setPadding(0, 24, 0, 24)
+                setPadding(0, 20, 0, 20)
                 layoutParams = GridLayout.LayoutParams().apply {
                     width = 0
                     height = ViewGroup.LayoutParams.WRAP_CONTENT
                     columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                    val margin = (2 * resources.displayMetrics.density).toInt()
+                    setMargins(margin, margin, margin, margin)
                 }
 
-                when {
-                    isSelected -> {
-                        setBackgroundColor(Color.parseColor("#1565A8"))
-                        setTextColor(Color.WHITE)
-                    }
-                    isToday -> {
-                        setBackgroundColor(Color.parseColor("#BBDEFB"))
-                        setTextColor(Color.parseColor("#1565A8"))
-                    }
-                    hasEntry -> {
-                        setBackgroundColor(Color.parseColor("#E3F2FD"))
-                        setTextColor(Color.parseColor("#333333"))
-                    }
-                    else -> {
-                        setBackgroundColor(Color.TRANSPARENT)
-                        setTextColor(Color.parseColor("#333333"))
-                    }
+                val bgColor = when {
+                    isSelected -> Color.parseColor("#1565A8")
+                    isToday -> Color.parseColor("#BBDEFB")
+                    hasEntry -> Color.parseColor("#E3F2FD")
+                    else -> Color.TRANSPARENT
                 }
+                setBackground(android.graphics.drawable.GradientDrawable().apply {
+                    shape = android.graphics.drawable.GradientDrawable.OVAL
+                    setColor(bgColor)
+                })
+
+                setTextColor(
+                    when {
+                        isSelected -> Color.WHITE
+                        isToday -> Color.parseColor("#1565A8")
+                        isFuture -> Color.parseColor("#CBD5E1")
+                        else -> Color.parseColor("#333333")
+                    }
+                )
 
                 setOnClickListener {
                     selectedDate = dateString
@@ -164,6 +170,10 @@ class CalendarActivity : AppCompatActivity() {
     private fun showSelectedDate() {
         tvSelectedDateHeader.text = formatDisplayDate(selectedDate)
 
+        val todayString = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        val isToday = selectedDate == todayString
+        val isFuture = selectedDate > todayString
+
         lifecycleScope.launch {
             val db = AppDatabase.getDatabase(this@CalendarActivity)
             val journals = db.journalDao().getJournalsByDate(userId, selectedDate)
@@ -175,10 +185,24 @@ class CalendarActivity : AppCompatActivity() {
             } else {
                 layoutEntriesContainer.visibility = View.GONE
                 layoutEntryEmpty.visibility = View.VISIBLE
-                btnAddForDate.setOnClickListener {
-                    val intent = Intent(this@CalendarActivity, AddEditJournalActivity::class.java)
-                    intent.putExtra(AddEditJournalActivity.EXTRA_TARGET_DATE, selectedDate)
-                    startActivity(intent)
+
+                tvEntryEmptyMessage.text = when {
+                    isFuture -> "Tanggal ini belum terjadi, jadi belum ada diary di sini."
+                    isToday -> "Belum ada diary untuk hari ini."
+                    else -> "Tidak ada diary yang tercatat pada tanggal ini."
+                }
+
+                // Menambah diary hanya diperbolehkan untuk hari ini,
+                // supaya diary tetap mencerminkan tanggal kejadian sebenarnya.
+                if (isToday) {
+                    btnAddForDate.visibility = View.VISIBLE
+                    btnAddForDate.setOnClickListener {
+                        val intent = Intent(this@CalendarActivity, AddEditJournalActivity::class.java)
+                        intent.putExtra(AddEditJournalActivity.EXTRA_TARGET_DATE, selectedDate)
+                        startActivity(intent)
+                    }
+                } else {
+                    btnAddForDate.visibility = View.GONE
                 }
             }
         }
@@ -194,7 +218,10 @@ class CalendarActivity : AppCompatActivity() {
             cardView.findViewById<TextView>(R.id.tv_journal_title).text = journal.title
             cardView.findViewById<TextView>(R.id.tv_journal_preview).text = journal.content
             cardView.findViewById<TextView>(R.id.tv_journal_date).text = formatDisplayDate(journal.dateString)
-            cardView.findViewById<ImageView>(R.id.iv_journal_mood).setImageResource(getMoodIcon(journal.moodTag))
+
+            // Pakai emoji dari Mood.kt (konsisten dengan statistik)
+            val mood = Mood.fromId(journal.moodTag)
+            cardView.findViewById<TextView>(R.id.iv_journal_mood).text = mood.emoji
 
             cardView.setOnClickListener {
                 val intent = Intent(this, JournalDetailActivity::class.java)
@@ -204,19 +231,6 @@ class CalendarActivity : AppCompatActivity() {
 
             layoutEntriesContainer.addView(cardView)
         }
-    }
-
-    private fun getMoodIcon(moodTag: String): Int = when (moodTag) {
-        "happy"   -> R.drawable.ic_mood_happy
-        "calm"    -> R.drawable.ic_mood_calm
-        "neutral" -> R.drawable.ic_mood_neutral
-        "sad"     -> R.drawable.ic_mood_sad
-        "anxious" -> R.drawable.ic_mood_anxious
-        "angry"   -> R.drawable.ic_mood_angry
-        "shy"     -> R.drawable.ic_mood_shy
-        "scared"  -> R.drawable.ic_mood_scared
-        "lazy"    -> R.drawable.ic_mood_lazy
-        else      -> R.drawable.ic_mood_neutral
     }
 
     private fun formatDisplayDate(dateString: String): String {

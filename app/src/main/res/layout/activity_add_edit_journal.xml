@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -69,119 +68,25 @@
                 android:text="Perasaanku saat ini:"
                 android:textColor="#333333"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="12dp" />
 
             <HorizontalScrollView
+                android:id="@+id/horizontal_mood_scroll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scrollbars="none"
-                android:layout_marginBottom="8dp">
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
+                    android:id="@+id/layout_mood_buttons"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingBottom="8dp">
-
-                    <!-- Happy -->
-                    <ImageButton
-                        android:id="@+id/btn_mood_happy"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_mood_happy"
-                        android:background="@drawable/bg_mood_happy"
-                        android:layout_marginEnd="8dp"
-                        app:tint="#FFFFFF"
-                        android:padding="12dp" />
-
-                    <!-- Calm -->
-                    <ImageButton
-                        android:id="@+id/btn_mood_calm"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_mood_calm"
-                        android:background="@drawable/bg_mood_calm"
-                        android:layout_marginEnd="8dp"
-                        app:tint="#FFFFFF"
-                        android:padding="12dp" />
-
-                    <!-- Neutral -->
-                    <ImageButton
-                        android:id="@+id/btn_mood_neutral"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_mood_neutral"
-                        android:background="@drawable/bg_mood_neutral"
-                        android:layout_marginEnd="8dp"
-                        app:tint="#FFFFFF"
-                        android:padding="12dp" />
-
-                    <!-- Sad -->
-                    <ImageButton
-                        android:id="@+id/btn_mood_sad"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_mood_sad"
-                        android:background="@drawable/bg_mood_sad"
-                        android:layout_marginEnd="8dp"
-                        app:tint="#FFFFFF"
-                        android:padding="12dp" />
-
-                    <!-- Anxious -->
-                    <ImageButton
-                        android:id="@+id/btn_mood_anxious"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_mood_anxious"
-                        android:background="@drawable/bg_mood_anxious"
-                        android:layout_marginEnd="8dp"
-                        app:tint="#FFFFFF"
-                        android:padding="12dp" />
-
-                    <!-- Angry -->
-                    <ImageButton
-                        android:id="@+id/btn_mood_angry"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_mood_angry"
-                        android:background="@drawable/bg_mood_angry"
-                        android:layout_marginEnd="8dp"
-                        app:tint="#FFFFFF"
-                        android:padding="12dp" />
-
-                    <!-- Shy -->
-                    <ImageButton
-                        android:id="@+id/btn_mood_shy"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_mood_shy"
-                        android:background="@drawable/bg_mood_shy"
-                        android:layout_marginEnd="8dp"
-                        app:tint="#FFFFFF"
-                        android:padding="12dp" />
-
-                    <!-- Scared -->
-                    <ImageButton
-                        android:id="@+id/btn_mood_scared"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_mood_scared"
-                        android:background="@drawable/bg_mood_scared"
-                        android:layout_marginEnd="8dp"
-                        app:tint="#FFFFFF"
-                        android:padding="12dp" />
-
-                    <!-- Lazy -->
-                    <ImageButton
-                        android:id="@+id/btn_mood_lazy"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_mood_lazy"
-                        android:background="@drawable/bg_mood_lazy"
-                        app:tint="#FFFFFF"
-                        android:padding="12dp" />
-
-                </LinearLayout>
+                    android:clipChildren="false"
+                    android:paddingHorizontal="4dp"
+                    android:paddingVertical="10dp" />
             </HorizontalScrollView>
 
             <TextView
@@ -191,30 +96,29 @@
                 android:text="Netral"
                 android:textColor="@color/primary"
                 android:textStyle="bold"
-                android:layout_marginBottom="16dp" />
+                android:textSize="16sp"
+                android:layout_marginBottom="20dp" />
 
             <!-- Title Input -->
             <EditText
                 android:id="@+id/et_journal_title"
+                style="@style/InputField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Judul Diary"
-                android:inputType="textCapSentences"
-                android:background="@android:drawable/edit_text"
-                android:padding="12dp"
-                android:layout_marginBottom="16dp" />
+                android:inputType="textCapSentences" />
 
             <!-- Content Input -->
             <EditText
                 android:id="@+id/et_journal_content"
+                style="@style/InputField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Ceritakan harimu..."
                 android:inputType="textMultiLine|textCapSentences"
                 android:minLines="10"
                 android:gravity="top|start"
-                android:background="@android:drawable/edit_text"
-                android:padding="12dp" />
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/tv_char_count"
@@ -235,7 +139,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:background="@android:color/white"
-        android:elevation="8dp">
+        android:elevation="4dp">
 
         <Button
             android:id="@+id/btn_save_journal"

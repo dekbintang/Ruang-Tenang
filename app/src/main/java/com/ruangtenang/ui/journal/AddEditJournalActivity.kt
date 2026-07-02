@@ -9,9 +9,11 @@ import com.ruangtenang.R
 import com.ruangtenang.data.SessionManager
 import com.ruangtenang.data.db.AppDatabase
 import com.ruangtenang.data.entity.Journal
+import com.ruangtenang.data.model.Mood
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlinx.coroutines.launch
+import android.view.Gravity
 
 class AddEditJournalActivity : AppCompatActivity() {
 
@@ -28,19 +30,9 @@ class AddEditJournalActivity : AppCompatActivity() {
     private lateinit var etContent: EditText
     private lateinit var tvCharCount: TextView
     private lateinit var tvSelectedMoodLabel: TextView
-    private val moodButtons = mutableMapOf<String, ImageButton>()
+    private lateinit var layoutMoodButtons: LinearLayout
 
-    private val moodLabels = mapOf(
-        "happy"   to "Senang",
-        "calm"    to "Tenang",
-        "neutral" to "Netral",
-        "sad"     to "Sedih",
-        "anxious" to "Cemas",
-        "angry"   to "Marah",
-        "shy"     to "Malu",
-        "scared"  to "Takut",
-        "lazy"    to "Malas"
-    )
+    private val moodButtons = mutableMapOf<String, TextView>()
 
     private var selectedMood: String = "neutral"
     private var editJournalId: Int? = null
@@ -54,30 +46,20 @@ class AddEditJournalActivity : AppCompatActivity() {
         session = SessionManager(this)
 
         bindViews()
-        setupMoodSelector()
+        setupMoodButtons()           // ← tombol dibuat otomatis dari Mood.kt
         handleIncomingIntent()
         setupSaveButton()
         setupCharCounter()
     }
 
     private fun bindViews() {
-        etTitle              = findViewById(R.id.et_journal_title)
-        etContent            = findViewById(R.id.et_journal_content)
-        tvCharCount          = findViewById(R.id.tv_char_count)
-        tvSelectedMoodLabel  = findViewById(R.id.tv_selected_mood_label)
-
-        moodButtons["happy"]   = findViewById(R.id.btn_mood_happy)
-        moodButtons["calm"]    = findViewById(R.id.btn_mood_calm)
-        moodButtons["neutral"] = findViewById(R.id.btn_mood_neutral)
-        moodButtons["sad"]     = findViewById(R.id.btn_mood_sad)
-        moodButtons["anxious"] = findViewById(R.id.btn_mood_anxious)
-        moodButtons["angry"]   = findViewById(R.id.btn_mood_angry)
-        moodButtons["shy"]     = findViewById(R.id.btn_mood_shy)
-        moodButtons["scared"]  = findViewById(R.id.btn_mood_scared)
-        moodButtons["lazy"]    = findViewById(R.id.btn_mood_lazy)
+        etTitle = findViewById(R.id.et_journal_title)
+        etContent = findViewById(R.id.et_journal_content)
+        tvCharCount = findViewById(R.id.tv_char_count)
+        tvSelectedMoodLabel = findViewById(R.id.tv_selected_mood_label)
+        layoutMoodButtons = findViewById(R.id.layout_mood_buttons)
 
         findViewById<ImageButton>(R.id.btn_back).setOnClickListener { finish() }
-
         setupDateDisplay()
     }
 
@@ -89,13 +71,29 @@ class AddEditJournalActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tv_journal_date).text = "📅 $formatted"
     }
 
-    private fun setupMoodSelector() {
-        moodButtons.forEach { (mood, button) ->
-            button.setOnClickListener {
-                selectMood(mood)
+    private fun setupMoodButtons() {
+        layoutMoodButtons.removeAllViews()
+        moodButtons.clear()
+
+        val density = resources.displayMetrics.density
+        val circleSize = (64 * density).toInt()   // 64dp, konsisten di semua layar
+        val circleMarginEnd = (12 * density).toInt()
+
+        Mood.MOODS.forEach { mood ->
+            val btn = TextView(this).apply {
+                text = mood.emoji
+                textSize = 28f
+                gravity = Gravity.CENTER
+                setBackgroundResource(R.drawable.bg_mood_circle)
+                layoutParams = LinearLayout.LayoutParams(circleSize, circleSize).apply {
+                    marginEnd = circleMarginEnd
+                }
+                setOnClickListener { selectMood(mood.id) }
             }
+
+            layoutMoodButtons.addView(btn)
+            moodButtons[mood.id] = btn
         }
-        selectMood("neutral")
     }
 
     private fun handleIncomingIntent() {
@@ -104,12 +102,15 @@ class AddEditJournalActivity : AppCompatActivity() {
         val presetMood = intent.getStringExtra(EXTRA_PRESET_MOOD)
         if (presetMood != null) {
             selectMood(presetMood)
+            return
         }
 
         val journalId = intent.getIntExtra(EXTRA_JOURNAL_ID, -1)
         if (journalId != -1) {
             editJournalId = journalId
             loadExistingJournal(journalId)
+        } else {
+            selectMood("neutral")
         }
     }
 
@@ -129,28 +130,20 @@ class AddEditJournalActivity : AppCompatActivity() {
         }
     }
 
-    private fun selectMood(mood: String) {
-        selectedMood = mood
+    private fun selectMood(moodId: String) {
+        selectedMood = moodId
 
-        moodButtons.values.forEach { btn ->
-            btn.animate()
-                .alpha(0.4f)
-                .scaleX(1.0f)
-                .scaleY(1.0f)
-                .setDuration(200)
-                .start()
+        moodButtons.forEach { (id, btn) ->
+            val isSelected = id == moodId
+
+            btn.setBackgroundResource(
+                if (isSelected) R.drawable.bg_mood_circle_selected
+                else R.drawable.bg_mood_circle
+            )
         }
 
-        moodButtons[mood]?.let { btn ->
-            btn.animate()
-                .alpha(1.0f)
-                .scaleX(1.25f)
-                .scaleY(1.25f)
-                .setDuration(200)
-                .start()
-        }
-
-        tvSelectedMoodLabel.text = moodLabels[mood] ?: mood.replaceFirstChar { it.uppercase() }
+        val mood = Mood.fromId(moodId)
+        tvSelectedMoodLabel.text = mood.label
     }
 
     private fun setupCharCounter() {
@@ -168,7 +161,6 @@ class AddEditJournalActivity : AppCompatActivity() {
             val title   = etTitle.text.toString().trim()
             val content = etContent.text.toString().trim()
 
-            // Validasi — JANGAN dihapus, supaya user tidak bisa simpan diary kosong
             if (title.isEmpty()) {
                 etTitle.error = "Judul tidak boleh kosong"
                 return@setOnClickListener
@@ -178,7 +170,6 @@ class AddEditJournalActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Tentukan tanggal: pakai targetDate (dari Kalender) kalau ada, kalau tidak pakai hari ini
             val today = targetDate
                 ?: SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
@@ -186,12 +177,17 @@ class AddEditJournalActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     val db = AppDatabase.getDatabase(this@AddEditJournalActivity)
                     val existing = db.journalDao().getJournalById(editJournalId!!)
-                    val updated = existing!!.copy(
+                    if (existing == null) {
+                        Toast.makeText(this@AddEditJournalActivity, "Diary tidak ditemukan", Toast.LENGTH_SHORT).show()
+                        finish()
+                        return@launch
+                    }
+                    val updated = existing.copy(
                         title = title,
                         content = content,
                         moodTag = selectedMood,
-                        dateString = today,
-                        timestamp = System.currentTimeMillis()
+                        dateString = targetDate ?: existing.dateString,
+                        timestamp = existing.timestamp
                     )
                     viewModel.updateJournal(updated)
                     Toast.makeText(this@AddEditJournalActivity, "Diary tersimpan 💙", Toast.LENGTH_SHORT).show()

@@ -35,26 +35,29 @@ class LoginActivity : AppCompatActivity() {
         val tvGoRegister = findViewById<TextView>(R.id.tv_go_register)
 
         btnLogin.setOnClickListener {
-            val username = etUsername.text.toString().trim()
-            val password = etPassword.text.toString().trim()
+            val identifier = etUsername.text.toString().trim()
+            val password = etPassword.text.toString() // jangan trim password
 
-            if (username.isEmpty() || password.isEmpty()) {
+            if (identifier.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Username dan password wajib diisi", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            btnLogin.isEnabled = false
             lifecycleScope.launch {
-                val user = authRepository.login(username, password)
+                val user = authRepository.login(identifier, password)
+                btnLogin.isEnabled = true
                 if (user != null) {
                     session.saveSession(user.id, user.username, user.isGuest)
                     goToMain()
                 } else {
-                    Toast.makeText(this@LoginActivity, "Username atau password salah", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "Username/email atau password salah", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
         btnGuest.setOnClickListener {
+            btnGuest.isEnabled = false
             lifecycleScope.launch {
                 val guestUser = authRepository.loginAsGuest()
                 session.saveSession(guestUser.id, guestUser.username, true)

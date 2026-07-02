@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ruangtenang.R
 import com.ruangtenang.data.entity.Journal
+import com.ruangtenang.data.model.Mood
 
 class JournalAdapter(
     private val onItemClick: (Journal) -> Unit,
@@ -26,13 +27,15 @@ class JournalAdapter(
     }
 
     inner class JournalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val ivMood: android.widget.ImageView = itemView.findViewById(R.id.iv_journal_mood)
+        private val tvMood: TextView = itemView.findViewById(R.id.iv_journal_mood)
         private val tvTitle: TextView = itemView.findViewById(R.id.tv_journal_title)
         private val tvPreview: TextView = itemView.findViewById(R.id.tv_journal_preview)
         private val tvDate: TextView = itemView.findViewById(R.id.tv_journal_date)
 
         fun bind(journal: Journal) {
-            ivMood.setImageResource(getMoodIcon(journal.moodTag))
+            val mood = Mood.fromId(journal.moodTag)
+            tvMood.text = mood.emoji
+
             tvTitle.text = journal.title
             tvPreview.text = journal.content
             tvDate.text = formatDate(journal.dateString)
@@ -41,21 +44,6 @@ class JournalAdapter(
             itemView.setOnLongClickListener { onItemLongClick(journal) }
         }
 
-        // Konversi mood key ke icon yang ditampilkan di card
-        private fun getMoodIcon(moodTag: String): Int = when (moodTag) {
-            "happy"   -> R.drawable.ic_mood_happy
-            "calm"    -> R.drawable.ic_mood_calm
-            "neutral" -> R.drawable.ic_mood_neutral
-            "sad"     -> R.drawable.ic_mood_sad
-            "anxious" -> R.drawable.ic_mood_anxious
-            "angry"   -> R.drawable.ic_mood_angry
-            "shy"     -> R.drawable.ic_mood_shy
-            "scared"  -> R.drawable.ic_mood_scared
-            "lazy"    -> R.drawable.ic_mood_lazy
-            else      -> R.drawable.ic_mood_neutral
-        }
-
-        // Format tanggal dari "YYYY-MM-DD" ke "28 Mei 2026"
         private fun formatDate(dateString: String): String {
             return try {
                 val parts = dateString.split("-")
@@ -76,7 +64,6 @@ class JournalAdapter(
     }
 
     companion object {
-        // DiffUtil: Hanya update item yang berubah, bukan seluruh list
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Journal>() {
             override fun areItemsTheSame(oldItem: Journal, newItem: Journal): Boolean {
                 return oldItem.id == newItem.id

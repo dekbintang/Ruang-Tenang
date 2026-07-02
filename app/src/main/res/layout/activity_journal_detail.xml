@@ -58,84 +58,95 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:padding="16dp">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@android:color/white">
 
-            <!-- Mood chip + Date row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:padding="20dp">
 
+                <!-- Mood chip + Date row -->
                 <LinearLayout
-                    android:id="@+id/layout_mood_chip"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_chip"
+                    android:layout_marginBottom="16dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="8dp">
+                    android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/iv_detail_mood"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="6dp" />
-
-                    <TextView
-                        android:id="@+id/tv_detail_mood_label"
+                    <LinearLayout
+                        android:id="@+id/layout_mood_chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Senang"
-                        android:textColor="@color/primary"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:background="@drawable/bg_chip"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:id="@+id/iv_detail_mood"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="20sp"
+                            android:layout_marginEnd="6dp" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_mood_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Senang"
+                            android:textColor="@color/primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_detail_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="28 Mei 2026"
+                        android:textColor="@color/textSecondary"
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/tv_detail_date"
-                    android:layout_width="0dp"
+                    android:id="@+id/tv_detail_title"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end"
-                    android:text="28 Mei 2026"
-                    android:textColor="#666666"
-                    android:textSize="14sp" />
+                    android:text="Judul Diary"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEEE"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/tv_detail_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="6dp"
+                    android:text="Isi diary akan tampil di sini..."
+                    android:textColor="@color/textPrimary"
+                    android:textSize="15sp" />
+
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/tv_detail_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Judul Diary"
-                android:textColor="#333333"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#E0E0E0"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:id="@+id/tv_detail_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:lineSpacingExtra="6dp"
-                android:text="Isi diary akan tampil di sini..."
-                android:textColor="#333333"
-                android:textSize="16sp" />
-
-        </LinearLayout>
+        </androidx.cardview.widget.CardView>
     </ScrollView>
 
 </LinearLayout>

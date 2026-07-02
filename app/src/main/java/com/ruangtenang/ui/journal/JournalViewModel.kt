@@ -3,6 +3,7 @@ package com.ruangtenang.ui.journal
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
@@ -24,16 +25,26 @@ class JournalViewModel(application: Application) : AndroidViewModel(application)
     val allJournals: LiveData<List<Journal>> = repository.getAllJournals(userId)
 
     private val _searchQuery = MutableLiveData<String>("")
-    val searchResults: LiveData<List<Journal>> = _searchQuery.switchMap { keyword ->
-        if (keyword.isBlank()) {
-            repository.getAllJournals(userId)
-        } else {
-            repository.searchJournals(userId, keyword)
-        }
+    private val _selectedMood = MutableLiveData<String?>(null)
+
+    val selectedMood: LiveData<String?> = _selectedMood
+
+    private val filterTrigger = MediatorLiveData<Pair<String, String?>>().apply {
+        value = Pair(_searchQuery.value ?: "", _selectedMood.value)
+        addSource(_searchQuery) { keyword -> value = Pair(keyword, _selectedMood.value) }
+        addSource(_selectedMood) { mood -> value = Pair(_searchQuery.value ?: "", mood) }
+    }
+
+    val searchResults: LiveData<List<Journal>> = filterTrigger.switchMap { (keyword, mood) ->
+        repository.searchAndFilterJournals(userId, keyword, mood)
     }
 
     fun setSearchQuery(keyword: String) {
         _searchQuery.value = keyword
+    }
+
+    fun setMoodFilter(moodId: String?) {
+        _selectedMood.value = moodId
     }
 
     fun insertJournal(journal: Journal) = viewModelScope.launch {

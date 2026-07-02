@@ -1,55 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="32dp">
+    android:fillViewport="true"
+    android:background="@color/background">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Buat Akun Baru"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="32dp" />
-
-    <EditText
-        android:id="@+id/et_reg_username"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username"
-        android:inputType="text"
-        android:layout_marginBottom="12dp" />
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp">
 
-    <EditText
-        android:id="@+id/et_reg_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password (min. 6 karakter)"
-        android:inputType="textPassword"
-        android:layout_marginBottom="12dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/register_title"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/textPrimary"
+            android:layout_marginBottom="28dp" />
 
-    <EditText
-        android:id="@+id/et_reg_confirm_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Konfirmasi Password"
-        android:inputType="textPassword"
-        android:layout_marginBottom="20dp" />
+        <EditText
+            android:id="@+id/et_reg_email"
+            style="@style/InputField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_email"
+            android:inputType="textEmailAddress"
+            android:autofillHints="emailAddress"
+            android:importantForAutofill="yes" />
 
-    <Button
-        android:id="@+id/btn_register"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Daftar"
-        android:layout_marginBottom="16dp" />
+        <EditText
+            android:id="@+id/et_reg_username"
+            style="@style/InputField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_username_register"
+            android:inputType="text"
+            android:autofillHints="username"
+            android:importantForAutofill="yes" />
 
-    <TextView
-        android:id="@+id/tv_go_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sudah punya akun? Login di sini"
-        android:textColor="@android:color/holo_blue_dark" />
+        <EditText
+            android:id="@+id/et_reg_password"
+            style="@style/InputField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_password"
+            android:inputType="textPassword"
+            android:autofillHints="newPassword"
+            android:importantForAutofill="yes" />
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/et_reg_confirm_password"
+            style="@style/InputField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_confirm_password"
+            android:inputType="textPassword"
+            android:autofillHints="newPassword"
+            android:importantForAutofill="yes"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="@string/action_register"
+            android:backgroundTint="@color/primary"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/tv_go_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/go_to_login"
+            android:textColor="@color/primary"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</ScrollView>

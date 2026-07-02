@@ -1,5 +1,6 @@
 package com.ruangtenang.ui.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -7,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.ruangtenang.MainActivity
 import com.ruangtenang.R
 import com.ruangtenang.data.SessionManager
 import com.ruangtenang.data.db.AppDatabase
@@ -26,6 +28,7 @@ class RegisterActivity : AppCompatActivity() {
         authRepository = AuthRepository(db.userDao())
         session = SessionManager(this)
 
+        val etEmail = findViewById<EditText>(R.id.et_reg_email)
         val etUsername = findViewById<EditText>(R.id.et_reg_username)
         val etPassword = findViewById<EditText>(R.id.et_reg_password)
         val etConfirmPassword = findViewById<EditText>(R.id.et_reg_confirm_password)
@@ -33,12 +36,13 @@ class RegisterActivity : AppCompatActivity() {
         val tvGoLogin = findViewById<TextView>(R.id.tv_go_login)
 
         btnRegister.setOnClickListener {
+            val email = etEmail.text.toString().trim()
             val username = etUsername.text.toString().trim()
             val password = etPassword.text.toString().trim()
             val confirmPassword = etConfirmPassword.text.toString().trim()
 
-            if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Username dan password wajib diisi", Toast.LENGTH_SHORT).show()
+            if (email.isEmpty() || username.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Semua field wajib diisi", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (password.length < 6) {
@@ -51,15 +55,14 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             lifecycleScope.launch {
-                val newUser = authRepository.register(username, password)
-                if (newUser != null) {
+                val result = authRepository.register(email, username, password)
+                result.onSuccess { newUser ->
                     session.saveSession(newUser.id, newUser.username, false)
                     Toast.makeText(this@RegisterActivity, "Registrasi berhasil!", Toast.LENGTH_SHORT).show()
-                    val intent = android.content.Intent(this@RegisterActivity, com.ruangtenang.MainActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this@RegisterActivity, MainActivity::class.java))
                     finish()
-                } else {
-                    Toast.makeText(this@RegisterActivity, "Username sudah digunakan", Toast.LENGTH_SHORT).show()
+                }.onFailure { error ->
+                    Toast.makeText(this@RegisterActivity, error.message ?: "Registrasi gagal", Toast.LENGTH_SHORT).show()
                 }
             }
         }

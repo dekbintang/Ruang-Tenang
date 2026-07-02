@@ -2,14 +2,19 @@ package com.ruangtenang
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.SearchView
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ruangtenang.data.entity.Journal
+import com.ruangtenang.data.model.Mood
 import com.ruangtenang.ui.journal.AddEditJournalActivity
 import com.ruangtenang.ui.journal.JournalAdapter
 import com.ruangtenang.ui.journal.JournalDetailActivity
@@ -21,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: JournalViewModel
     private lateinit var adapter: JournalAdapter
+    private val moodChips = mutableMapOf<String?, TextView>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +36,7 @@ class MainActivity : AppCompatActivity() {
 
         setupRecyclerView()
         setupSearchBar()
+        setupMoodFilterChips()
         setupFab()
         setupProfileButton()
     }
@@ -71,6 +78,57 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
         })
+    }
+
+    private fun setupMoodFilterChips() {
+        val container = findViewById<LinearLayout>(R.id.layout_mood_filter)
+        val density = resources.displayMetrics.density
+        val paddingH = (16 * density).toInt()
+        val paddingV = (8 * density).toInt()
+        val chipMarginEnd = (8 * density).toInt()
+
+        fun makeChip(key: String?, label: String): TextView {
+            return TextView(this).apply {
+                text = label
+                textSize = 13f
+                setPadding(paddingH, paddingV, paddingH, paddingV)
+                setBackgroundResource(R.drawable.bg_chip_filter)
+                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.textPrimary))
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { marginEnd = chipMarginEnd }
+                gravity = Gravity.CENTER
+                setOnClickListener {
+                    viewModel.setMoodFilter(key)
+                }
+            }
+        }
+
+        // Chip "Semua" selalu ada di paling depan
+        val allChip = makeChip(null, "Semua")
+        container.addView(allChip)
+        moodChips[null] = allChip
+
+        // Chip per mood, emoji + label biar gampang dikenali
+        Mood.MOODS.forEach { mood ->
+            val chip = makeChip(mood.id, "${mood.emoji} ${mood.label}")
+            container.addView(chip)
+            moodChips[mood.id] = chip
+        }
+
+        viewModel.selectedMood.observe(this) { selected ->
+            moodChips.forEach { (key, chip) ->
+                val isSelected = key == selected
+                chip.setBackgroundResource(
+                    if (isSelected) R.drawable.bg_chip_filter_selected else R.drawable.bg_chip_filter
+                )
+                chip.setTextColor(
+                    if (isSelected) ContextCompat.getColor(this, android.R.color.white)
+                    else ContextCompat.getColor(this, R.color.textPrimary)
+                )
+            }
+        }
     }
 
     private fun setupFab() {

@@ -9,7 +9,7 @@ import com.ruangtenang.data.entity.User
 
 @Database(
     entities = [Journal::class, User::class],
-    version = 6, // naik dari 5 ke 6 (tambah ForeignKey + Index di journal_table)
+    version = 9, // naik dari 8 ke 9 — tambah unique index pada username
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -28,7 +28,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "ruang_tenang_database"
                 )
-                    .fallbackToDestructiveMigration() // aman untuk development, data lama akan terhapus saat versi naik
+                    .fallbackToDestructiveMigration() // dev only — data lama akan terhapus saat versi naik
                     .build()
                 INSTANCE = instance
                 instance

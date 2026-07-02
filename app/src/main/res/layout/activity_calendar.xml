@@ -140,21 +140,25 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:paddingTop="24dp"
-                android:paddingBottom="24dp">
+                android:background="@android:color/white"
+                android:paddingTop="28dp"
+                android:paddingBottom="28dp"
+                android:paddingHorizontal="16dp">
 
                 <TextView
+                    android:id="@+id/tv_entry_empty_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="Tidak ada buku harian pada hari ini."
-                    android:textColor="#666666"
+                    android:textColor="@color/textSecondary"
                     android:textSize="14sp"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="14dp" />
 
                 <Button
                     android:id="@+id/btn_add_for_date"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:text="+ Tulis Sekarang"
                     android:backgroundTint="@color/primary"
                     android:textColor="#FFFFFF" />

@@ -16,6 +16,10 @@ class JournalRepository(private val journalDao: JournalDao) {
         return journalDao.searchJournals(userId, keyword)
     }
 
+    fun searchAndFilterJournals(userId: Int, keyword: String, moodTag: String?): LiveData<List<Journal>> {
+        return journalDao.searchAndFilterJournals(userId, keyword, moodTag)
+    }
+
     suspend fun getMoodsForMonth(userId: Int, monthPattern: String): List<JournalCalendarItem> {
         return journalDao.getMoodsForMonth(userId, monthPattern)
     }

@@ -13,6 +13,7 @@ import com.ruangtenang.R
 import com.ruangtenang.data.SessionManager
 import com.ruangtenang.data.db.AppDatabase
 import com.ruangtenang.data.db.MoodCount
+import com.ruangtenang.data.model.Mood
 import com.ruangtenang.data.repository.AuthRepository
 import com.ruangtenang.data.repository.JournalRepository
 import com.ruangtenang.ui.auth.LoginActivity
@@ -30,16 +31,6 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var layoutMoodChart: LinearLayout
 
     private var currentPhotoUri: String? = null
-
-    private val moodOrder = listOf(
-        "neutral", "calm", "happy", "shy", "lazy",
-        "anxious", "angry", "sad", "scared"
-    )
-    private val moodEmoji = mapOf(
-        "happy" to "😄", "calm" to "🙂", "neutral" to "😐",
-        "sad" to "😢", "anxious" to "😟", "angry" to "😠",
-        "shy" to "☺️", "scared" to "😨", "lazy" to "😴"
-    )
 
     private val pickImageLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
@@ -102,12 +93,23 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun saveProfile() {
         val userId = session.getUserId()
+        val username = etUsername.text.toString().trim()
         val ageText = etAge.text.toString().trim()
         val age = if (ageText.isNotEmpty()) ageText.toIntOrNull() else null
 
+        if (username.isEmpty()) {
+            etUsername.error = "Username tidak boleh kosong"
+            return
+        }
+
         lifecycleScope.launch {
-            authRepository.updateProfile(userId, age, currentPhotoUri)
-            Toast.makeText(this@ProfileActivity, "Profil disimpan 💙", Toast.LENGTH_SHORT).show()
+            val result = authRepository.updateProfile(userId, username, age, currentPhotoUri)
+            result.onSuccess {
+                session.saveSession(userId, username, session.isGuest())
+                Toast.makeText(this@ProfileActivity, "Profil disimpan 💙", Toast.LENGTH_SHORT).show()
+            }.onFailure {
+                Toast.makeText(this@ProfileActivity, it.message ?: "Gagal menyimpan", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -127,8 +129,9 @@ class ProfileActivity : AppCompatActivity() {
         val maxCount = (countMap.values.maxOrNull() ?: 1).coerceAtLeast(1)
         val maxBarHeightDp = 130
 
-        moodOrder.forEach { mood ->
-            val count = countMap[mood] ?: 0
+        // Pakai MOODS dari single source of truth
+        Mood.MOODS.forEach { mood ->
+            val count = countMap[mood.id] ?: 0
 
             val barContainer = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
@@ -148,7 +151,7 @@ class ProfileActivity : AppCompatActivity() {
             }
 
             val emoji = TextView(this).apply {
-                text = moodEmoji[mood] ?: "❓"
+                text = mood.emoji
                 textSize = 18f
                 gravity = Gravity.CENTER
                 setPadding(0, 8, 0, 0)
