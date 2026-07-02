@@ -9,7 +9,7 @@ import com.ruangtenang.data.entity.User
 
 @Database(
     entities = [Journal::class, User::class],
-    version = 5, // naik dari 4 ke 5
+    version = 6, // naik dari 5 ke 6 (tambah ForeignKey + Index di journal_table)
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

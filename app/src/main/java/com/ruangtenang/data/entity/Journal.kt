@@ -2,9 +2,20 @@ package com.ruangtenang.data.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "journal_table")
+@Entity(
+    tableName = "journal_table",
+    foreignKeys = [ForeignKey(
+        entity = User::class,
+        parentColumns = ["id"],
+        childColumns = ["user_id"],
+        onDelete = ForeignKey.CASCADE
+    )],
+    indices = [Index(value = ["user_id"])]
+)
 data class Journal(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
