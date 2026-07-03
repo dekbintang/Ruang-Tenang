@@ -8,6 +8,11 @@ import javax.crypto.spec.PBEKeySpec
 
 class AuthRepository(private val userDao: UserDao) {
 
+    companion object {
+        private const val MIN_AGE = 1
+        private const val MAX_AGE = 120
+    }
+
     private fun generateSalt(): String {
         val salt = ByteArray(16)
         SecureRandom().nextBytes(salt)
@@ -45,10 +50,6 @@ class AuthRepository(private val userDao: UserDao) {
         return Result.success(newUser.copy(id = id.toInt()))
     }
 
-    /**
-     * Login menerima "identifier" yang boleh berupa EMAIL atau USERNAME,
-     * supaya cocok dengan hint field di layar Login ("Username").
-     */
     suspend fun login(identifier: String, password: String): User? {
         val user = if (identifier.contains("@")) {
             userDao.getUserByEmail(identifier)
@@ -77,13 +78,10 @@ class AuthRepository(private val userDao: UserDao) {
         userDao.deleteUser(userId)
     }
 
-    // BARU — bersihkan sesi tamu yatim (app ditutup paksa tanpa logout resmi)
     suspend fun cleanupOrphanGuests(exceptUserId: Int?) {
         if (exceptUserId == null) {
             userDao.deleteAllGuests()
         }
-        // Kalau ada exceptUserId (tamu yang masih aktif sesinya), biarkan —
-        // hanya bersihkan saat benar-benar tidak ada sesi tamu aktif.
     }
 
     suspend fun getUserById(userId: Int): User? = userDao.getUserById(userId)
@@ -91,10 +89,13 @@ class AuthRepository(private val userDao: UserDao) {
     suspend fun updateProfile(userId: Int, username: String, age: Int?, photoUri: String?): Result<Unit> {
         if (username.isBlank()) return Result.failure(Exception("Username tidak boleh kosong"))
 
+        if (age != null && (age < MIN_AGE || age > MAX_AGE)) {
+            return Result.failure(Exception("Umur harus antara $MIN_AGE-$MAX_AGE tahun"))
+        }
+
         val current = userDao.getUserById(userId)
             ?: return Result.failure(Exception("User tidak ditemukan"))
 
-        // Kalau username berubah, pastikan tidak bentrok dengan user lain
         if (!username.equals(current.username, ignoreCase = true)) {
             val taken = userDao.getUserByUsername(username)
             if (taken != null && taken.id != userId) {
@@ -106,11 +107,6 @@ class AuthRepository(private val userDao: UserDao) {
         return Result.success(Unit)
     }
 
-    /**
-     * Ganti password untuk user yang sudah login (bukan "lupa password" —
-     * ini butuh password lama sebagai bukti kepemilikan akun, karena app ini
-     * tidak punya backend/email service untuk reset token).
-     */
     suspend fun changePassword(userId: Int, oldPassword: String, newPassword: String): Result<Unit> {
         if (newPassword.length < 6) return Result.failure(Exception("Password baru minimal 6 karakter"))
 

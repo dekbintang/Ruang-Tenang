@@ -133,7 +133,8 @@
                 style="@style/InputField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number" />
+                android:inputType="number"
+                android:maxLength="3" />
 
             <Button
                 android:id="@+id/btn_save_profile"

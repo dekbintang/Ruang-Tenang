@@ -29,6 +29,8 @@ class ProfileActivity : AppCompatActivity() {
         private const val STATS_WINDOW_DAYS = 30L
         private const val MILLIS_PER_DAY = 24L * 60 * 60 * 1000
         private const val MAX_BAR_HEIGHT_DP = 130
+        private const val MIN_AGE = 1
+        private const val MAX_AGE = 120
     }
 
     private lateinit var session: SessionManager
@@ -55,8 +57,6 @@ class ProfileActivity : AppCompatActivity() {
                     it, Intent.FLAG_GRANT_READ_URI_PERMISSION
                 )
             } catch (e: Exception) {
-                // Sumber gambar (mis. beberapa file provider) tidak mendukung permission
-                // persisten — foto tetap bisa dipakai untuk sesi ini, hanya dicatat untuk debugging.
                 Log.e(TAG, "Gagal mengambil persistable URI permission untuk foto profil", e)
             }
             currentPhotoUri = it.toString()
@@ -110,8 +110,6 @@ class ProfileActivity : AppCompatActivity() {
                     try {
                         applyRealPhoto(Uri.parse(it.photoUri))
                     } catch (e: Exception) {
-                        // URI foto tersimpan sudah tidak valid/permission dicabut —
-                        // biarkan ImageView pakai gambar default, tapi tetap dicatat.
                         Log.e(TAG, "Gagal memuat foto profil dari URI: ${it.photoUri}", e)
                     }
                 }
@@ -119,11 +117,6 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Pasang foto asli ke avatar. Placeholder (ikon kosong) pakai padding & tint
-     * supaya kelihatan seperti ikon, tapi foto asli harus full-bleed tanpa padding
-     * itu, atau hasilnya kepotong/kekecilan di tengah lingkaran.
-     */
     private fun applyRealPhoto(uri: Uri) {
         ivPhoto.setPadding(0, 0, 0, 0)
         ivPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
@@ -161,12 +154,26 @@ class ProfileActivity : AppCompatActivity() {
         val userId = session.getUserId()
         val username = etUsername.text.toString().trim()
         val ageText = etAge.text.toString().trim()
-        val age = if (ageText.isNotEmpty()) ageText.toIntOrNull() else null
 
         if (username.isEmpty()) {
             etUsername.error = "Username tidak boleh kosong"
             return
         }
+
+        val age: Int? = if (ageText.isNotEmpty()) {
+            val parsedAge = ageText.toIntOrNull()
+            when {
+                parsedAge == null -> {
+                    etAge.error = "Umur harus berupa angka"
+                    return
+                }
+                parsedAge < MIN_AGE || parsedAge > MAX_AGE -> {
+                    etAge.error = "Umur harus antara $MIN_AGE-$MAX_AGE tahun"
+                    return
+                }
+                else -> parsedAge
+            }
+        } else null
 
         lifecycleScope.launch {
             val result = authRepository.updateProfile(userId, username, age, currentPhotoUri)
