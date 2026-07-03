@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5">
@@ -41,42 +42,51 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center"
-            android:padding="24dp">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="112dp"
-                android:layout_height="112dp"
-                app:cardCornerRadius="56dp"
-                app:cardElevation="2dp">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_profile_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#DCE8FA"
-                    android:scaleType="centerCrop"
-                    android:src="@android:drawable/sym_def_app_icon" />
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:id="@+id/tv_change_photo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Ganti Foto"
-                android:textColor="@color/primary"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:background="@drawable/bg_profile_card"
             android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
             android:padding="20dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <FrameLayout
+                    android:layout_width="112dp"
+                    android:layout_height="112dp"
+                    android:layout_gravity="center_horizontal">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="112dp"
+                        android:layout_height="112dp"
+                        app:cardCornerRadius="56dp"
+                        app:cardElevation="0dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_profile_photo"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/circle_avatar_placeholder_bg"
+                            android:padding="24dp"
+                            android:scaleType="centerInside"
+                            android:src="@android:drawable/ic_menu_myplaces"
+                            app:tint="@color/textSecondary" />
+                    </androidx.cardview.widget.CardView>
+
+                    <ImageButton
+                        android:id="@+id/btn_change_photo"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/bg_camera_badge"
+                        android:padding="8dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_camera_badge"
+                        android:contentDescription="Ganti foto profil" />
+                </FrameLayout>
+            </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -95,6 +105,25 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Email"
+                android:textColor="#666666"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_profile_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:textColor="@color/textPrimary"
+                android:textSize="15sp"
+                tools:text="user@email.com" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="Umur"
                 android:textColor="#666666"
                 android:textSize="12sp" />
@@ -110,6 +139,7 @@
                 android:id="@+id/btn_save_profile"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
+                android:layout_marginTop="8dp"
                 android:text="Simpan Profil"
                 android:backgroundTint="@color/primary"
                 android:textColor="#FFFFFF" />
@@ -120,13 +150,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/bg_stats_card"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="8dp"
             android:padding="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Statistik mood"
+                android:textColor="@color/textPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -135,7 +167,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="30 hari terakhir"
-                android:textColor="#666666"
+                android:textColor="@color/textSecondary"
                 android:textSize="13sp" />
 
             <LinearLayout
@@ -146,6 +178,62 @@
                 android:orientation="horizontal"
                 android:gravity="bottom" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_profile_card"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="8dp"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ganti Password"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Password Lama"
+                android:textColor="#666666"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/et_old_password"
+                style="@style/InputField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Password Baru (min. 6 karakter)"
+                android:textColor="#666666"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/et_new_password"
+                style="@style/InputField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+
+            <Button
+                android:id="@+id/btn_change_password"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:text="Ganti Password"
+                android:backgroundTint="@color/primary"
+                android:textColor="#FFFFFF" />
         </LinearLayout>
 
         <Button

@@ -3,11 +3,13 @@ package com.ruangtenang.ui.profile
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.ruangtenang.R
 import com.ruangtenang.data.SessionManager
@@ -17,17 +19,29 @@ import com.ruangtenang.data.model.Mood
 import com.ruangtenang.data.repository.AuthRepository
 import com.ruangtenang.data.repository.JournalRepository
 import com.ruangtenang.ui.auth.LoginActivity
+import com.ruangtenang.ui.journal.JournalViewModel
 import kotlinx.coroutines.launch
 
 class ProfileActivity : AppCompatActivity() {
 
+    companion object {
+        private const val TAG = "ProfileActivity"
+        private const val STATS_WINDOW_DAYS = 30L
+        private const val MILLIS_PER_DAY = 24L * 60 * 60 * 1000
+        private const val MAX_BAR_HEIGHT_DP = 130
+    }
+
     private lateinit var session: SessionManager
     private lateinit var authRepository: AuthRepository
     private lateinit var journalRepository: JournalRepository
+    private lateinit var viewModel: JournalViewModel
 
     private lateinit var ivPhoto: ImageView
     private lateinit var etUsername: EditText
     private lateinit var etAge: EditText
+    private lateinit var tvEmail: TextView
+    private lateinit var etOldPassword: EditText
+    private lateinit var etNewPassword: EditText
     private lateinit var layoutMoodChart: LinearLayout
 
     private var currentPhotoUri: String? = null
@@ -40,9 +54,13 @@ class ProfileActivity : AppCompatActivity() {
                 contentResolver.takePersistableUriPermission(
                     it, Intent.FLAG_GRANT_READ_URI_PERMISSION
                 )
-            } catch (e: Exception) { /* ignore kalau tidak didukung sumbernya */ }
+            } catch (e: Exception) {
+                // Sumber gambar (mis. beberapa file provider) tidak mendukung permission
+                // persisten — foto tetap bisa dipakai untuk sesi ini, hanya dicatat untuk debugging.
+                Log.e(TAG, "Gagal mengambil persistable URI permission untuk foto profil", e)
+            }
             currentPhotoUri = it.toString()
-            ivPhoto.setImageURI(it)
+            applyRealPhoto(it)
         }
     }
 
@@ -54,16 +72,18 @@ class ProfileActivity : AppCompatActivity() {
         val db = AppDatabase.getDatabase(this)
         authRepository = AuthRepository(db.userDao())
         journalRepository = JournalRepository(db.journalDao())
+        viewModel = ViewModelProvider(this)[JournalViewModel::class.java]
 
         bindViews()
         loadProfile()
         loadMoodStats()
 
         findViewById<ImageButton>(R.id.btn_back).setOnClickListener { finish() }
-        findViewById<TextView>(R.id.tv_change_photo).setOnClickListener {
+        findViewById<ImageButton>(R.id.btn_change_photo).setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
         findViewById<Button>(R.id.btn_save_profile).setOnClickListener { saveProfile() }
+        findViewById<Button>(R.id.btn_change_password).setOnClickListener { changePassword() }
         findViewById<Button>(R.id.btn_logout).setOnClickListener { doLogout() }
     }
 
@@ -71,6 +91,9 @@ class ProfileActivity : AppCompatActivity() {
         ivPhoto = findViewById(R.id.iv_profile_photo)
         etUsername = findViewById(R.id.et_profile_username)
         etAge = findViewById(R.id.et_profile_age)
+        tvEmail = findViewById(R.id.tv_profile_email)
+        etOldPassword = findViewById(R.id.et_old_password)
+        etNewPassword = findViewById(R.id.et_new_password)
         layoutMoodChart = findViewById(R.id.layout_mood_chart)
     }
 
@@ -81,12 +104,55 @@ class ProfileActivity : AppCompatActivity() {
             user?.let {
                 etUsername.setText(it.username)
                 etAge.setText(it.age?.toString() ?: "")
+                tvEmail.text = if (it.isGuest) "Akun tamu (tanpa email)" else it.email
                 currentPhotoUri = it.photoUri
                 if (!it.photoUri.isNullOrEmpty()) {
                     try {
-                        ivPhoto.setImageURI(Uri.parse(it.photoUri))
-                    } catch (e: Exception) { }
+                        applyRealPhoto(Uri.parse(it.photoUri))
+                    } catch (e: Exception) {
+                        // URI foto tersimpan sudah tidak valid/permission dicabut —
+                        // biarkan ImageView pakai gambar default, tapi tetap dicatat.
+                        Log.e(TAG, "Gagal memuat foto profil dari URI: ${it.photoUri}", e)
+                    }
                 }
+            }
+        }
+    }
+
+    /**
+     * Pasang foto asli ke avatar. Placeholder (ikon kosong) pakai padding & tint
+     * supaya kelihatan seperti ikon, tapi foto asli harus full-bleed tanpa padding
+     * itu, atau hasilnya kepotong/kekecilan di tengah lingkaran.
+     */
+    private fun applyRealPhoto(uri: Uri) {
+        ivPhoto.setPadding(0, 0, 0, 0)
+        ivPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
+        ivPhoto.imageTintList = null
+        ivPhoto.setImageURI(uri)
+    }
+
+    private fun changePassword() {
+        val userId = session.getUserId()
+        val oldPassword = etOldPassword.text.toString()
+        val newPassword = etNewPassword.text.toString()
+
+        if (oldPassword.isEmpty()) {
+            etOldPassword.error = "Masukkan password lama"
+            return
+        }
+        if (newPassword.length < 6) {
+            etNewPassword.error = "Password baru minimal 6 karakter"
+            return
+        }
+
+        lifecycleScope.launch {
+            val result = authRepository.changePassword(userId, oldPassword, newPassword)
+            result.onSuccess {
+                etOldPassword.text.clear()
+                etNewPassword.text.clear()
+                Toast.makeText(this@ProfileActivity, "Password berhasil diubah", Toast.LENGTH_SHORT).show()
+            }.onFailure {
+                Toast.makeText(this@ProfileActivity, it.message ?: "Gagal mengubah password", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -115,7 +181,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun loadMoodStats() {
         val userId = session.getUserId()
-        val thirtyDaysAgo = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000)
+        val thirtyDaysAgo = System.currentTimeMillis() - (STATS_WINDOW_DAYS * MILLIS_PER_DAY)
 
         lifecycleScope.launch {
             val stats = journalRepository.getMoodStats(userId, thirtyDaysAgo)
@@ -127,7 +193,7 @@ class ProfileActivity : AppCompatActivity() {
         layoutMoodChart.removeAllViews()
         val countMap = stats.associateBy({ it.mood_tag }, { it.count })
         val maxCount = (countMap.values.maxOrNull() ?: 1).coerceAtLeast(1)
-        val maxBarHeightDp = 130
+        val maxBarHeightDp = MAX_BAR_HEIGHT_DP
 
         // Pakai MOODS dari single source of truth
         Mood.MOODS.forEach { mood ->
@@ -143,7 +209,7 @@ class ProfileActivity : AppCompatActivity() {
             val barHeightPx = (barHeightDp * resources.displayMetrics.density).toInt()
 
             val bar = View(this).apply {
-                setBackgroundColor(android.graphics.Color.parseColor("#3B82F6"))
+                setBackgroundColor(androidx.core.content.ContextCompat.getColor(this@ProfileActivity, R.color.profile_accent))
                 layoutParams = LinearLayout.LayoutParams(
                     (24 * resources.displayMetrics.density).toInt(),
                     barHeightPx
@@ -169,8 +235,7 @@ class ProfileActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             if (isGuest) {
-                val db = AppDatabase.getDatabase(this@ProfileActivity)
-                db.journalDao().deleteAllByUser(userId)
+                viewModel.deleteAllJournalsByUser()
                 authRepository.logoutGuest(userId)
             }
             session.clearSession()

@@ -11,4 +11,17 @@
     <color name="textSecondary">#64748b</color>  <!-- Slate 500 -->
 
     <color name="bottom_nav_color">#1E3A8A</color>
+
+    <!-- Calendar state colors (dipindahkan dari CalendarActivity.kt) -->
+    <color name="calendar_selected">#1565A8</color>
+    <color name="calendar_today_bg">#BBDEFB</color>
+    <color name="calendar_has_entry_bg">#E3F2FD</color>
+    <color name="calendar_today_text">#1565A8</color>
+    <color name="calendar_future_text">#CBD5E1</color>
+    <color name="calendar_default_text">#333333</color>
+
+    <color name="profile_accent">#3B82F6</color>
+
+    <color name="stats_card_bg">#EAF2FF</color>
+    <color name="stats_card_border">#BFDBFE</color>
 </resources>

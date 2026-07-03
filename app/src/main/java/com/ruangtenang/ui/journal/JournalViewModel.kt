@@ -62,4 +62,18 @@ class JournalViewModel(application: Application) : AndroidViewModel(application)
     fun deleteJournalById(id: Int) = viewModelScope.launch {
         repository.deleteJournalById(id)
     }
+
+    suspend fun getJournalById(id: Int): Journal? {
+        return repository.getJournalById(id)
+    }
+
+    suspend fun getMoodsForMonth(monthPattern: String) =
+        repository.getMoodsForMonth(userId, monthPattern)
+
+    suspend fun getJournalsByDate(dateString: String) =
+        repository.getJournalsByDate(userId, dateString)
+
+    suspend fun deleteAllJournalsByUser() {
+        repository.deleteAllByUser(userId)
+    }
 }

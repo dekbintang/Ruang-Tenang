@@ -8,4 +8,16 @@
     <string name="hint_confirm_password">Konfirmasi Password</string>
     <string name="action_register">Daftar</string>
     <string name="go_to_login">Sudah punya akun? Login di sini</string>
+
+    <!-- Dialog konfirmasi hapus jurnal -->
+    <string name="dialog_hapus_title">Hapus</string>
+    <string name="dialog_batal">Batal</string>
+    <string name="dialog_hapus_jurnal_message">Yakin ingin menghapus jurnal ini?</string>
+    <string name="dialog_hapus_diary_title">Hapus Diary</string>
+    <string name="dialog_hapus_diary_message">Yakin ingin menghapus diary ini?</string>
+    <string name="dialog_hapus_diary_named_message">Yakin ingin menghapus \"%1$s\"? Tindakan ini tidak bisa dibatalkan.</string>
+
+    <!-- Toolbar titles -->
+    <string name="title_edit_diary">Edit Diary</string>
+    <string name="title_tambah_diary">Tambah Diary</string>
 </resources>

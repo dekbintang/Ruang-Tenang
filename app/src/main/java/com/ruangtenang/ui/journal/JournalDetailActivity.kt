@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.ruangtenang.R
-import com.ruangtenang.data.db.AppDatabase
 import com.ruangtenang.data.entity.Journal
 import com.ruangtenang.data.model.Mood
 import kotlinx.coroutines.launch
@@ -40,8 +39,7 @@ class JournalDetailActivity : AppCompatActivity() {
 
     private fun loadJournal(id: Int) {
         lifecycleScope.launch {
-            val db = AppDatabase.getDatabase(this@JournalDetailActivity)
-            val journal = db.journalDao().getJournalById(id)
+            val journal = viewModel.getJournalById(id)
             journal?.let {
                 currentJournal = it
                 runOnUiThread { displayJournal(it) }
@@ -89,13 +87,13 @@ class JournalDetailActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.btn_delete).setOnClickListener {
             AlertDialog.Builder(this)
-                .setTitle("Hapus Diary")
-                .setMessage("Yakin ingin menghapus diary ini?")
-                .setPositiveButton("Hapus") { _, _ ->
+                .setTitle(R.string.dialog_hapus_diary_title)
+                .setMessage(R.string.dialog_hapus_diary_message)
+                .setPositiveButton(R.string.dialog_hapus_title) { _, _ ->
                     viewModel.deleteJournalById(journalId)
                     finish()
                 }
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(R.string.dialog_batal, null)
                 .show()
         }
     }

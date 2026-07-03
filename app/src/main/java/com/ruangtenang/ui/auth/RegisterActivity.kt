@@ -38,8 +38,8 @@ class RegisterActivity : AppCompatActivity() {
         btnRegister.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val username = etUsername.text.toString().trim()
-            val password = etPassword.text.toString().trim()
-            val confirmPassword = etConfirmPassword.text.toString().trim()
+            val password = etPassword.text.toString()
+            val confirmPassword = etConfirmPassword.text.toString()
 
             if (email.isEmpty() || username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Semua field wajib diisi", Toast.LENGTH_SHORT).show()

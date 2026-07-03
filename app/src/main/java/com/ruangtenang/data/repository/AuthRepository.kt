@@ -105,4 +105,28 @@ class AuthRepository(private val userDao: UserDao) {
         userDao.updateUser(current.copy(username = username, age = age, photoUri = photoUri))
         return Result.success(Unit)
     }
+
+    /**
+     * Ganti password untuk user yang sudah login (bukan "lupa password" —
+     * ini butuh password lama sebagai bukti kepemilikan akun, karena app ini
+     * tidak punya backend/email service untuk reset token).
+     */
+    suspend fun changePassword(userId: Int, oldPassword: String, newPassword: String): Result<Unit> {
+        if (newPassword.length < 6) return Result.failure(Exception("Password baru minimal 6 karakter"))
+
+        val current = userDao.getUserById(userId)
+            ?: return Result.failure(Exception("User tidak ditemukan"))
+
+        if (current.isGuest) return Result.failure(Exception("Akun tamu tidak memiliki password"))
+
+        val oldHashed = hashPassword(oldPassword, current.passwordSalt)
+        if (oldHashed != current.passwordHash) {
+            return Result.failure(Exception("Password lama tidak sesuai"))
+        }
+
+        val newSalt = generateSalt()
+        val newHash = hashPassword(newPassword, newSalt)
+        userDao.updateUser(current.copy(passwordHash = newHash, passwordSalt = newSalt))
+        return Result.success(Unit)
+    }
 }

@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.ruangtenang.R
 import com.ruangtenang.data.SessionManager
-import com.ruangtenang.data.db.AppDatabase
 import com.ruangtenang.data.entity.Journal
 import com.ruangtenang.data.model.Mood
 import java.text.SimpleDateFormat
@@ -18,7 +17,6 @@ import android.view.Gravity
 class AddEditJournalActivity : AppCompatActivity() {
 
     companion object {
-        const val EXTRA_PRESET_MOOD = "extra_preset_mood"
         const val EXTRA_JOURNAL_ID  = "extra_journal_id"
         const val EXTRA_TARGET_DATE = "extra_target_date"
     }
@@ -99,12 +97,6 @@ class AddEditJournalActivity : AppCompatActivity() {
     private fun handleIncomingIntent() {
         targetDate = intent.getStringExtra(EXTRA_TARGET_DATE)
 
-        val presetMood = intent.getStringExtra(EXTRA_PRESET_MOOD)
-        if (presetMood != null) {
-            selectMood(presetMood)
-            return
-        }
-
         val journalId = intent.getIntExtra(EXTRA_JOURNAL_ID, -1)
         if (journalId != -1) {
             editJournalId = journalId
@@ -115,11 +107,10 @@ class AddEditJournalActivity : AppCompatActivity() {
     }
 
     private fun loadExistingJournal(id: Int) {
-        findViewById<TextView>(R.id.tv_toolbar_title).text = "Edit Diary"
+        findViewById<TextView>(R.id.tv_toolbar_title).text = getString(R.string.title_edit_diary)
 
         lifecycleScope.launch {
-            val db = AppDatabase.getDatabase(this@AddEditJournalActivity)
-            val journal = db.journalDao().getJournalById(id)
+            val journal = viewModel.getJournalById(id)
             journal?.let {
                 runOnUiThread {
                     etTitle.setText(it.title)
@@ -175,8 +166,7 @@ class AddEditJournalActivity : AppCompatActivity() {
 
             if (editJournalId != null) {
                 lifecycleScope.launch {
-                    val db = AppDatabase.getDatabase(this@AddEditJournalActivity)
-                    val existing = db.journalDao().getJournalById(editJournalId!!)
+                    val existing = viewModel.getJournalById(editJournalId!!)
                     if (existing == null) {
                         Toast.makeText(this@AddEditJournalActivity, "Diary tidak ditemukan", Toast.LENGTH_SHORT).show()
                         finish()

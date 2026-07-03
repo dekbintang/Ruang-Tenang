@@ -13,17 +13,18 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.ruangtenang.R
-import com.ruangtenang.data.db.AppDatabase
 import com.ruangtenang.data.entity.Journal
 import com.ruangtenang.data.model.Mood
 import com.ruangtenang.ui.journal.AddEditJournalActivity
 import com.ruangtenang.ui.journal.JournalDetailActivity
+import com.ruangtenang.ui.journal.JournalViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
-import com.ruangtenang.data.SessionManager
 
 class CalendarActivity : AppCompatActivity() {
 
@@ -35,8 +36,7 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var tvEntryEmptyMessage: TextView
     private lateinit var btnAddForDate: Button
 
-    private lateinit var session: SessionManager
-    private var userId: Int = 0
+    private lateinit var viewModel: JournalViewModel
 
     private val calendar = Calendar.getInstance()
     private var selectedDate: String =
@@ -47,8 +47,7 @@ class CalendarActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar)
 
-        session = SessionManager(this)
-        userId = session.getUserId()
+        viewModel = ViewModelProvider(this)[JournalViewModel::class.java]
 
         bindViews()
         findViewById<ImageButton>(R.id.btn_back).setOnClickListener { finish() }
@@ -86,8 +85,7 @@ class CalendarActivity : AppCompatActivity() {
         val monthPattern = "$monthKey-%"
 
         lifecycleScope.launch {
-            val db = AppDatabase.getDatabase(this@CalendarActivity)
-            val items = db.journalDao().getMoodsForMonth(userId, monthPattern)
+            val items = viewModel.getMoodsForMonth(monthPattern)
             journalDatesInMonth = items.map { it.date_string }.toSet()
             buildGrid(monthKey)
             showSelectedDate()
@@ -128,9 +126,9 @@ class CalendarActivity : AppCompatActivity() {
                 }
 
                 val bgColor = when {
-                    isSelected -> Color.parseColor("#1565A8")
-                    isToday -> Color.parseColor("#BBDEFB")
-                    hasEntry -> Color.parseColor("#E3F2FD")
+                    isSelected -> ContextCompat.getColor(this@CalendarActivity, R.color.calendar_selected)
+                    isToday -> ContextCompat.getColor(this@CalendarActivity, R.color.calendar_today_bg)
+                    hasEntry -> ContextCompat.getColor(this@CalendarActivity, R.color.calendar_has_entry_bg)
                     else -> Color.TRANSPARENT
                 }
                 setBackground(android.graphics.drawable.GradientDrawable().apply {
@@ -141,9 +139,9 @@ class CalendarActivity : AppCompatActivity() {
                 setTextColor(
                     when {
                         isSelected -> Color.WHITE
-                        isToday -> Color.parseColor("#1565A8")
-                        isFuture -> Color.parseColor("#CBD5E1")
-                        else -> Color.parseColor("#333333")
+                        isToday -> ContextCompat.getColor(this@CalendarActivity, R.color.calendar_today_text)
+                        isFuture -> ContextCompat.getColor(this@CalendarActivity, R.color.calendar_future_text)
+                        else -> ContextCompat.getColor(this@CalendarActivity, R.color.calendar_default_text)
                     }
                 )
 
@@ -175,8 +173,7 @@ class CalendarActivity : AppCompatActivity() {
         val isFuture = selectedDate > todayString
 
         lifecycleScope.launch {
-            val db = AppDatabase.getDatabase(this@CalendarActivity)
-            val journals = db.journalDao().getJournalsByDate(userId, selectedDate)
+            val journals = viewModel.getJournalsByDate(selectedDate)
 
             if (journals.isNotEmpty()) {
                 layoutEntriesContainer.visibility = View.VISIBLE
@@ -187,7 +184,7 @@ class CalendarActivity : AppCompatActivity() {
                 layoutEntryEmpty.visibility = View.VISIBLE
 
                 tvEntryEmptyMessage.text = when {
-                    isFuture -> "Tanggal ini belum terjadi, jadi belum ada diary di sini."
+                    isFuture -> "Tanggal ini belum terjadi, belum ada diary."
                     isToday -> "Belum ada diary untuk hari ini."
                     else -> "Tidak ada diary yang tercatat pada tanggal ini."
                 }

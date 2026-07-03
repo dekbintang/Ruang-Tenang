@@ -142,12 +142,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun showDeleteDialog(journal: Journal) {
         AlertDialog.Builder(this)
-            .setTitle("Hapus Diary")
-            .setMessage("Yakin ingin menghapus \"${journal.title}\"? Tindakan ini tidak bisa dibatalkan.")
-            .setPositiveButton("Hapus") { _, _ ->
+            .setTitle(R.string.dialog_hapus_diary_title)
+            .setMessage(getString(R.string.dialog_hapus_diary_named_message, journal.title))
+            .setPositiveButton(R.string.dialog_hapus_title) { _, _ ->
                 viewModel.deleteJournal(journal)
             }
-            .setNegativeButton("Batal", null)
+            .setNegativeButton(R.string.dialog_batal, null)
             .show()
     }
 
