@@ -1,5 +1,6 @@
 package com.ruangtenang.ui.auth
 
+import android.text.InputFilter
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -20,6 +21,13 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var authRepository: AuthRepository
     private lateinit var session: SessionManager
 
+    companion object {
+        private val passwordInputFilter = InputFilter { source, start, end, _, _, _ ->
+            val filtered = source.subSequence(start, end).filter { it.code in 33..126 }
+            if (filtered.length == end - start) null else filtered
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -34,6 +42,9 @@ class RegisterActivity : AppCompatActivity() {
         val etConfirmPassword = findViewById<EditText>(R.id.et_reg_confirm_password)
         val btnRegister = findViewById<Button>(R.id.btn_register)
         val tvGoLogin = findViewById<TextView>(R.id.tv_go_login)
+
+        etPassword.filters = etPassword.filters + passwordInputFilter
+        etConfirmPassword.filters = etConfirmPassword.filters + passwordInputFilter
 
         btnRegister.setOnClickListener {
             val email = etEmail.text.toString().trim()

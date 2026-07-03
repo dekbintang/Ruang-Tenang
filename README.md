@@ -1,7 +1,7 @@
 <div align="center">
 
   # 🍃 Ruang Tenang
-  **Aplikasi Pencatatan Diary Digital Aktivitas Harian dengan Kalender Riwayat Mood.**
+  **Ruang Tenang: Digital Diary untuk Mencatat Kegiatan, Emosi dan Pengalaman Harian.**
 
   <p align="center">
     Aplikasi Android sederhana untuk mencatat perasaan harian dalam bentuk jurnal/diary,

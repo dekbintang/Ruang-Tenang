@@ -29,9 +29,13 @@ class AuthRepository(private val userDao: UserDao) {
     private fun isValidEmail(email: String): Boolean =
         android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
+    private fun isValidPassword(password: String): Boolean =
+        password.isNotEmpty() && password.all { it.code in 33..126 }
+
     suspend fun register(email: String, username: String, password: String): Result<User> {
         if (!isValidEmail(email)) return Result.failure(Exception("Format email tidak valid"))
         if (username.length < 3) return Result.failure(Exception("Username minimal 3 karakter"))
+        if (!isValidPassword(password)) return Result.failure(Exception("Password hanya boleh huruf, angka, dan simbol (tanpa spasi/emoticon)"))
 
         val existingEmail = userDao.getUserByEmail(email)
         if (existingEmail != null) return Result.failure(Exception("Email sudah terdaftar"))
@@ -109,6 +113,7 @@ class AuthRepository(private val userDao: UserDao) {
 
     suspend fun changePassword(userId: Int, oldPassword: String, newPassword: String): Result<Unit> {
         if (newPassword.length < 6) return Result.failure(Exception("Password baru minimal 6 karakter"))
+        if (!isValidPassword(newPassword)) return Result.failure(Exception("Password hanya boleh huruf, angka, dan simbol (tanpa spasi/emoticon)"))
 
         val current = userDao.getUserById(userId)
             ?: return Result.failure(Exception("User tidak ditemukan"))

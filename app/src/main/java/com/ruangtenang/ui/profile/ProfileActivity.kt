@@ -1,5 +1,6 @@
 package com.ruangtenang.ui.profile
 
+import android.text.InputFilter
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -31,6 +32,12 @@ class ProfileActivity : AppCompatActivity() {
         private const val MAX_BAR_HEIGHT_DP = 130
         private const val MIN_AGE = 1
         private const val MAX_AGE = 120
+
+        // Hanya izinkan huruf, angka, dan simbol ASCII cetak (tanpa spasi & tanpa emoticon/emoji)
+        private val passwordInputFilter = InputFilter { source, start, end, _, _, _ ->
+            val filtered = source.subSequence(start, end).filter { it.code in 33..126 }
+            if (filtered.length == end - start) null else filtered
+        }
     }
 
     private lateinit var session: SessionManager
@@ -95,6 +102,9 @@ class ProfileActivity : AppCompatActivity() {
         etOldPassword = findViewById(R.id.et_old_password)
         etNewPassword = findViewById(R.id.et_new_password)
         layoutMoodChart = findViewById(R.id.layout_mood_chart)
+
+        etOldPassword.filters = etOldPassword.filters + passwordInputFilter
+        etNewPassword.filters = etNewPassword.filters + passwordInputFilter
     }
 
     private fun loadProfile() {
