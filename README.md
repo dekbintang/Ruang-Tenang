@@ -1,12 +1,18 @@
 <div align="center">
 
-  # 🍃 Ruang Tenang
-  **Ruang Tenang: Digital Diary untuk Mencatat Kegiatan, Emosi dan Pengalaman Harian.**
+# 🍃 Ruang Tenang
+### *Digital Mood Tracker & Daily Journal Android Application*
 
-  <p align="center">
-    Aplikasi Android sederhana untuk mencatat perasaan harian dalam bentuk jurnal/diary,
-    melihat riwayatnya lewat kalender, dan memantau statistik mood dari waktu ke waktu.
-  </p>
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9+-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org/)
+[![Android](https://img.shields.io/badge/Platform-Android_SDK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/)
+[![Architecture](https://img.shields.io/badge/Architecture-MVVM-orange?style=for-the-badge)](https://developer.android.com/topic/architecture)
+[![Room DB](https://img.shields.io/badge/Storage-Room_Database-4285F4?style=for-the-badge&logo=sqlite&logoColor=white)](https://developer.android.com/training/data-storage/room)
+[![Material Design](https://img.shields.io/badge/UI-Material_Design_3-757575?style=for-the-badge&logo=material-design&logoColor=white)](https://m3.material.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+
+<p align="center">
+  Aplikasi Android *self-care* dan jurnal digital untuk mencatat perasaan harian, merefleksikan kegiatan emosional, memantau riwayat jurnal berbasis kalender, serta menganalisis pola mood secara berkala demi kesehatan mental yang lebih baik.
+</p>
 
 </div>
 
@@ -16,70 +22,110 @@
 
 Proyek ini dikembangkan oleh:
 
-| Nama | NIM |
-| :--- | :--- |
-| **Trio Suro Wibowo** | `2405551168` |
-| **I Kadek Bintang Adi Bimantara** | `2405551049` |
-| **Richard Christian Mozart Diazoni** | `2405551019` |
-| **I Komang Cahya Kertha Yasa** | `2405551034` |
+| Nama | NIM | Peran Utama |
+| :--- | :--- | :--- |
+| **I Kadek Bintang Adi Bimantara** | `2405551049` | Core Feature, Architecture & Database |
+| **Trio Suro Wibowo** | `2405551168` | UI/UX & Layout Implementation |
+| **Richard Christian Mozart Diazoni** | `2405551019` | State Handling & Business Logic |
+| **I Komang Cahya Kertha Yasa** | `2405551034` | Testing & Asset Optimization |
 
 ---
 
-## ✨ Fitur Utama
+## 🏗️ Pola Arsitektur (MVVM Pattern)
 
-- 🔐 **Autentikasi**: Login, registrasi akun baru, dan opsi masuk sebagai *Guest*.
-- 📖 **Jurnal Perasaan (CRUD)**: Tulis, lihat detail, edit, dan hapus catatan diary harian.
-  Setiap entri diary punya judul, isi cerita, dan tag mood (9 pilihan: Senang, Tenang,
-  Netral, Sedih, Cemas, Marah, Malu, Takut, Malas). Data tersimpan lokal lewat **Room Database**.
-- 🔍 **Pencarian Diary**: Cari entri diary berdasarkan judul atau isi lewat search bar di beranda.
-- 📅 **Kalender Riwayat**: Lihat tanggal-tanggal yang punya catatan diary dalam satu bulan,
-  navigasi antar bulan, dan buka entri diary dari tanggal yang dipilih. Diary baru hanya
-  bisa ditambahkan untuk tanggal hari ini (tidak bisa untuk tanggal lampau/masa depan),
-  supaya waktu pencatatan tetap jujur mencerminkan kapan diary itu ditulis.
-- 👤 **Profil & Statistik Mood**: Ubah nama/umur pengguna, serta lihat ringkasan
-  distribusi mood dari entri diary 30 hari terakhir.
+Aplikasi dibangun dengan mematuhi prinsip arsitektur **Modern Android Development (MAD)** menggunakan pola **Model-View-ViewModel (MVVM)** yang *decoupled*, mudah diuji (*testable*), dan reaktif:
 
----
+```mermaid
+flowchart TD
+    subgraph UI_Layer["UI Layer (View)"]
+        Activity["Activity / XML Layout"]
+        Adapter["RecyclerView (ListAdapter + DiffUtil)"]
+    end
 
-## 🛠️ Teknologi yang Digunakan
+    subgraph ViewModel_Layer["Architecture Components"]
+        VM["ViewModel"]
+        LiveData["LiveData / StateFlow"]
+    end
 
-- **Bahasa Pemrograman**: Kotlin
-- **Arsitektur**: MVVM (ViewModel + Repository + Room DAO)
-- **Database Lokal**: Room Database (SQLite)
-- **Tampilan Data**: RecyclerView dengan `ListAdapter` + `DiffUtil`
-- **Asynchronous Programming**: Kotlin Coroutines & LiveData
-- **UI**: View-based layout (XML) dengan AppCompat & Material Components,
-  navigasi antar layar memakai `Intent` (tanpa Navigation Component graph)
+    subgraph Data_Layer["Data & Persistence Layer"]
+        Repo["Repository"]
+        DAO["Room DAO"]
+        DB[("SQLite (Room Database)")]
+    end
 
----
-
-## 📱 Struktur Navigasi Aplikasi
-
-1. **Splash Screen** → mengecek sesi login, lalu arahkan ke Login atau Beranda.
-2. **Login / Register**: Masuk dengan akun terdaftar, buat akun baru, atau lanjut sebagai Guest.
-3. **Beranda (Main)**: Daftar seluruh diary (terbaru di atas), search bar, tombol
-   "Tambah Diary" dan "Kalender".
-4. **Tambah / Edit Diary**: Form judul, isi cerita, dan pilihan mood emoji.
-5. **Detail Diary**: Tampilan lengkap satu entri diary, dengan tombol Edit dan Hapus.
-6. **Kalender**: Navigasi bulan, tanggal bertanda punya entri, daftar diary per tanggal.
-7. **Profil**: Info pengguna (nama, umur), statistik mood, dan tombol Logout.
+    Activity -->|Observes| LiveData
+    VM -->|Emits| LiveData
+    Activity -->|User Events| VM
+    VM -->|Coroutines Dispatch| Repo
+    Repo -->|Queries / Inserts| DAO
+    DAO --> DB
+```
 
 ---
 
-## 🚀 Cara Menjalankan Proyek
+## ✨ Fitur Unggulan
 
-1. **Clone repositori ini** ke mesin lokal Anda:
+* 🔐 **Otentikasi & Guest Mode**: Fleksibilitas masuk menggunakan akun terdaftar atau eksplorasi instan tanpa login via *Guest Mode*.
+* 📖 **Jurnal Perasaan (Full CRUD)**:
+  * Menulis, membaca detail, memperbarui, dan menghapus entri jurnal.
+  * Tagging emosi dengan **9 representasi mood visual**: *Senang, Tenang, Netral, Sedih, Cemas, Marah, Malu, Takut, dan Malas*.
+  * Penyimpanan data lokal yang cepat dan andal menggunakan **Room Database** (SQLite ORM).
+* 🔍 **Pencarian Real-Time**: Pencarian cepat entri catatan berdasarkan kecocokan kata kunci pada judul maupun isi diary.
+* 📅 **Kalender Riwayat Interaktif**: 
+  * Pelacakan visual tanggal-tanggal yang memiliki catatan jurnal dalam satu bulan.
+  * Aturan integritas waktu: pencatatan entri baru dikhususkan untuk hari ini (*real-time journaling*) guna menjaga keaslian refleksi emosi.
+* 📊 **Analisis & Statistik Mood**: Visualisasi tren dan distribusi emosi 30 hari terakhir pada profil pengguna untuk *mood tracking awareness*.
+
+---
+
+## 🛠️ Tech Stack & Komponen Teknis
+
+* **Bahasa**: [Kotlin 1.9+](https://kotlinlang.org/)
+* **Arsitektur**: MVVM (ViewModel, LiveData, Lifecycle Runtime KTX)
+* **Penyimpanan Lokal**: Android Jetpack [Room Database 2.6](https://developer.android.com/training/data-storage/room)
+* **Komputasi Asinkron**: Kotlin Coroutines & Kotlin Flows
+* **Optimasi List**: `RecyclerView` dengan `ListAdapter` dan `DiffUtil` untuk rendering efisien
+* **Desain UI**: XML Layouts dengan Google Material Components 3 & ConstraintLayout
+* **Parser Utilitas**: Google Gson 2.10
+
+---
+
+## 📱 Alur Layar Aplikasi
+
+```
+[Splash Screen] ──> [Login / Register / Guest] ──> [Beranda (Main Feed)]
+                                                          │
+          ┌───────────────────────────────────────────────┴───────────────────────────────┐
+          ▼                                               ▼                               ▼
+ [Tambah / Edit Diary]                           [Kalender Riwayat]              [Profil & Statistik]
+ (Input Judul, Cerita & Mood)                    (Navigasi Bulanan)              (Distribusi Mood 30 Hari)
+```
+
+---
+
+## ⚡ Panduan Menjalankan Proyek
+
+### Prasyarat
+* Android Studio (Koala / Ladybug atau versi terbaru)
+* Android SDK (API Level 24+ / Android 7.0 Nougat ke atas)
+* JDK 17
+
+### Langkah Instalasi
+1. **Clone Repositori:**
    ```bash
-   git clone https://github.com/username/RuangTenang.git
+   git clone https://github.com/dekbintang/Ruang-Tenang.git
+   cd Ruang-Tenang
    ```
-2. Buka proyek menggunakan **Android Studio** (disarankan versi terbaru).
-3. Tunggu hingga proses **Gradle Sync** selesai.
-4. Pastikan Anda memiliki emulator (AVD) yang berjalan atau perangkat fisik Android
-   yang terhubung (dengan *USB Debugging* aktif).
-5. Klik tombol **Run** (▶️) di Android Studio atau tekan `Shift + F10`.
+2. Buka proyek di **Android Studio**.
+3. Tunggu hingga proses **Gradle Sync** selesai secara otomatis.
+4. Hubungkan perangkat fisik Android (aktifkan mode *USB Debugging*) atau jalankan Android Virtual Device (AVD).
+5. Klik ikon **Run (▶️)** atau gunakan shortcut `Shift + F10`.
 
 ---
+
+## 📄 Lisensi
+Proyek ini dilisensikan di bawah [Lisensi MIT](LICENSE).
 
 <div align="center">
-  <i>Untuk kesehatan mental yang lebih baik.</i>
+  <i>Ruang Tenang — Ruang aman untuk merefleksikan setiap detik perasaanmu.</i>
 </div>
